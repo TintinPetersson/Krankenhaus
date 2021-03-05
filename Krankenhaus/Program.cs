@@ -11,6 +11,8 @@ namespace Krankenhaus
     {
         static void Main(string[] args)
         {
+
+                
             Ticker ticker = new Ticker();
             Doctor doctor = new Doctor();
             Patient patient = new Patient();
