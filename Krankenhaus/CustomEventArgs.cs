@@ -12,6 +12,8 @@ namespace Krankenhaus
         public CustomEventArgs(string s)
         {
             timeNow = s;
+
+            /////
         }
     }
 }
