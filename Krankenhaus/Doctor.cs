@@ -8,14 +8,66 @@ namespace Krankenhaus
 {
     public class Doctor
     {
-        public int DoctorID { get; set; }
-        public int MyProperty { get; set; }
+        Random rand = new Random();
 
+        private int doctorId;
+        private string doctorName;
+        private int competence;
+        private int fatigue;
+
+        public int DoctorID
+        {
+            get { return doctorId; }
+            set { doctorId = value; }
+        }
+        public string DoctorName
+        {
+            get { return doctorName; }
+            set { doctorName = value; }
+        }
+
+        public int Competence
+        {
+            get { return competence; }
+            set { competence = value; }
+        }
+
+        public int Fatigue 
+        {
+            get { return fatigue; }
+            set { fatigue = value; } 
+        }
+
+        public Doctor()
+        {
+            this.DoctorName = GenerateDoctorName();
+            this.Competence = GenerateCompetence();
+            this.Fatigue = 0;
+
+        }
         public EventHandler VetEj { get; set; }
 
         public void VetEjHandler(object sender, EventArgs e)
         {
-            
+
         }
+
+        public string GenerateDoctorName()
+        {
+            string[] names = { "Aron", "Rickard", "Henriette", "Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
+            string[] lastNames = { "Andersson", "Olsson", "Bark", "Karlsson", "Nyqvist", "Hedlund", "Kozmakidis", "Billgren", "Niemon", "Keroi" };
+
+            string firstName = names[rand.Next(0, names.Length)];
+            string lastName = lastNames[rand.Next(0, lastNames.Length)];
+
+            return firstName + " " + lastName;
+        }
+
+        public int GenerateCompetence()
+        {
+            int competence = rand.Next(-10, 30);
+            return competence;
+        }
+
     }
 }

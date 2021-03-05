@@ -11,14 +11,11 @@ namespace Krankenhaus
     {
         static void Main(string[] args)
         {
-
-                
-            Ticker ticker = new Ticker();
-            Doctor doctor = new Doctor();
-            Patient patient = new Patient();
-
-            ticker.Tick += doctor.VetEjHandler;
-            ticker.Tick += patient.VetEjHandler;
+            Generator.Start();
+            Console.ReadLine();
+            //ticker.Tick += doctor.VetEjHandler;
+            //ticker.Tick += patient.VetEjHandler;
         }
+
     }
 }
