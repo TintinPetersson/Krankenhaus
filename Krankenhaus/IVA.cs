@@ -6,7 +6,33 @@ using System.Threading.Tasks;
 
 namespace Krankenhaus
 {
-    class Class1
+    class IVA
     {
+        private List<Patient> patients;
+        public int NumberOfBeds { get; set; }
+        public int OccupiedBeds { get; set; }
+        public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
+
+        public IVA()
+        {
+            patients = new List<Patient>();
+            
+        }
+
+        public bool CheckIn(Patient patient)
+        {
+            if(IsFull)
+            {
+                return false;
+            }
+
+            patients.Add(patient);
+            return true;
+        }
+
+        public void CheckOut()
+        {
+            
+        }
     }
 }

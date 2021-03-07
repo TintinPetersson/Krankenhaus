@@ -44,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generator.cs" />
+    <Compile Include="IVA.cs" />
+    <Compile Include="Queue.cs" />
+    <Compile Include="Sanatorium.cs" />
     <Compile Include="Ticker.cs" />
     <Compile Include="CustomEventArgs.cs" />
     <Compile Include="Patient.cs" />

@@ -11,7 +11,8 @@ namespace Krankenhaus
     {
         static void Main(string[] args)
         {
-            Generator.Start();
+            Generator generator = new Generator();
+            generator.Start();
             Console.ReadLine();
             //ticker.Tick += doctor.VetEjHandler;
             //ticker.Tick += patient.VetEjHandler;

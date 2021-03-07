@@ -8,45 +8,18 @@ namespace Krankenhaus
 {
     class Patient
     {
-        private int patientID;
-        private string patientName;
-        private string dateOfBirth;
-        private int sicknessLevel;
-        private bool isAlive;
 
         Random rand = new Random();
 
-        public int PatientID
-        {
-            get { return patientID; }
-            set { patientID = value; }
-        }
+        public int PatientID { get; private set; }
 
-        public string PatientName
-        {
-            get { return patientName; }
-            set { patientName = value; }
-        }
+        public string PatientName { get; set; }
 
-        public string DateOfBirth
-        {
-            get { return dateOfBirth; }
-            set { dateOfBirth = value; }
-        }
+        public string DateOfBirth { get; private set; }
 
-        public int SicknessLevel
-        {
-            get { return sicknessLevel; }
-            set { sicknessLevel = value; }
-        }
+        public int SicknessLevel { get; set; }
 
-        public bool IsAlive
-        {
-            get { return isAlive; }
-            set { isAlive = value; }
-        }
-
-
+        public bool IsAlive { get; set; }
 
         public Patient()
         {
@@ -56,11 +29,8 @@ namespace Krankenhaus
             this.DateOfBirth = GenerateBirthDate();
             this.SicknessLevel = GenerateSicknessLevel();
         }
-        public EventHandler VetEj { get; set; }
-        public void VetEjHandler(object sender, EventArgs e)
-        {
 
-        }
+        
         public string GeneratePatientName()
         {
             string[] names = { "Elias", "Karin", "Ola", "Henrik", "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", "Ilfa", "Anders" };
@@ -88,6 +58,5 @@ namespace Krankenhaus
 
             return date;
         }
-
     }
 }
