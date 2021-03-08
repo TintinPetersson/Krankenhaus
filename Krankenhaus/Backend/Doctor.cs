@@ -43,15 +43,7 @@ namespace Krankenhaus
             this.DoctorName = GenerateDoctorName();
             this.Competence = GenerateCompetence();
             this.Fatigue = 0;
-
         }
-        public EventHandler VetEj { get; set; }
-
-        public void VetEjHandler(object sender, EventArgs e)
-        {
-
-        }
-
         public string GenerateDoctorName()
         {
             string[] names = { "Aron", "Rickard", "Henriette", "Katrin", "Adam", "Eva","Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
@@ -62,12 +54,10 @@ namespace Krankenhaus
 
             return firstName + " " + lastName;
         }
-
         public int GenerateCompetence()
         {
             int competence = rand.Next(-10, 30);
             return competence;
         }
-
     }
 }
