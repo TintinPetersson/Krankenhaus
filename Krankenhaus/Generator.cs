@@ -61,16 +61,8 @@ namespace Krankenhaus
             for (int i = 0; i < 25; i++)
             {
                 Patient patient = new Patient();
-<<<<<<< HEAD
                 queue.AddToQueue(patient);
-<<<<<<< HEAD
-=======
-                patients.Enqueue(patient);
                 Thread.Sleep(250);
->>>>>>> a647c511c74625f81b6de5c264e8b09cfdcfff6c
-=======
-                Thread.Sleep(200);
->>>>>>> Amanda
             }
         }
     }
