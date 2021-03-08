@@ -20,7 +20,6 @@ namespace Krankenhaus
 
         public void Start()
         {
-            ticker.Tick += queue.ChangeSicknessLevel;
             ticker.Tick += ShowQueue;
             StartClock += StartTicker;
 
