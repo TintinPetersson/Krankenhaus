@@ -8,6 +8,11 @@ namespace Krankenhaus
 {
     class Frontend
     {
+        public Frontend()
+        {
+            Generator.UpdateStatus += PrintStatusReport;
+        }
+
         public int Menu()
         {
             do
@@ -19,6 +24,11 @@ namespace Krankenhaus
                     return result;
                 }
             } while (true);
+        }
+
+        public void PrintStatusReport(object sender, UpdateStatusArgs e)
+        {
+            Console.WriteLine(e.Status);
         }
     }
 }

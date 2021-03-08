@@ -24,6 +24,11 @@ namespace Krankenhaus
             return patients.Dequeue();
         }
 
+        public Patient Peek()
+        {
+            return patients.Peek();
+        }
+
         public void AddToQueue(Patient patient)
         {
             //try catch
@@ -53,12 +58,18 @@ namespace Krankenhaus
                 {
                     newSickness = patient.SicknessLevel + 1;
                 }
+                else if (patient.SicknessLevel == 0)
+                {
+                    newSickness = patient.SicknessLevel;
+                }
                 else
                 {
                     newSickness = patient.SicknessLevel;
                 }
 
                 patient.SicknessLevel = newSickness;
+
+                
             }
         }
 

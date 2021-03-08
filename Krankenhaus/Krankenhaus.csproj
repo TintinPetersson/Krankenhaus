@@ -43,14 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logger.cs" />
+    <Compile Include="Backend\Logger.cs" />
     <Compile Include="Frontend\Frontend.cs" />
     <Compile Include="Backend\Generator.cs" />
     <Compile Include="Backend\IVA.cs" />
     <Compile Include="Backend\Queue.cs" />
     <Compile Include="Backend\Sanatorium.cs" />
     <Compile Include="Backend\Ticker.cs" />
-    <Compile Include="Backend\CustomEventArgs.cs" />
+    <Compile Include="Backend\UpdateStatusArgs.cs" />
     <Compile Include="Backend\Patient.cs" />
     <Compile Include="Backend\Doctor.cs" />
     <Compile Include="Backend\Program.cs" />

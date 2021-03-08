@@ -19,13 +19,12 @@ namespace Krankenhaus
 
         public int SicknessLevel { get; set; }
 
-        public bool IsAlive { get; set; }
+        public bool IsAlive { get => this.SicknessLevel < 10; }
 
         public Patient()
         {
             this.PatientID = 0;
             this.PatientName = GeneratePatientName();
-            this.IsAlive = true;
             this.DateOfBirth = GenerateBirthDate();
             this.SicknessLevel = GenerateSicknessLevel();
         }
@@ -49,7 +48,6 @@ namespace Krankenhaus
 
         public string GenerateBirthDate()
         {
-
             DateTime start = new DateTime(1925, 1, 1);
             DateTime end = new DateTime(2005, 12, 30);
             int range = (end - start).Days;

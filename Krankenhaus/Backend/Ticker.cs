@@ -9,7 +9,7 @@ namespace Krankenhaus
 {
     class Ticker
     {
-        public event EventHandler<CustomEventArgs> Tick;
+        public event EventHandler Tick;
         private bool keepTicking;
         public async Task Ticking(int time)
         {
@@ -18,8 +18,10 @@ namespace Krankenhaus
             while (keepTicking)
             {
                 await Task.Delay(time * 1000);
-                Tick?.Invoke(this, new CustomEventArgs());
+                Tick?.Invoke(this, EventArgs.Empty);
             }
+
+            return;
         }
 
         public void StopTick()

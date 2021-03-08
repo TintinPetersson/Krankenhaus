@@ -12,22 +12,17 @@ namespace Krankenhaus
         Random rand = new Random();
 
         public int NumberOfBeds { get; set; }
-        public int OccupiedBeds { get; set; }
+        public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
 
         public Sanatorium()
         {
             patients = new List<Patient>();
+            NumberOfBeds = 10;
         }
-        public bool CheckIn(Patient patient)
+        public void CheckIn(Patient patient)
         {
-            if (IsFull)
-            {
-                return false;
-            }
-
             patients.Add(patient);
-            return true;
         }
         public void CheckOut()
         {
@@ -36,6 +31,8 @@ namespace Krankenhaus
 
         public void OnTick(object sender, EventArgs e)
         {
+            var remove = new List<Patient>();
+
             foreach (Patient patient in patients)
             {
                 int newSickness = rand.Next(1, 21);
@@ -54,7 +51,30 @@ namespace Krankenhaus
                 }
 
                 patient.SicknessLevel = newSickness;
+
+                if (patient.SicknessLevel <= 0)
+                {
+                    Generator.survivors.Add(patient);
+                    remove.Add(patient);
+                }
+                else if (patient.SicknessLevel >= 10)
+                {
+                    Generator.afterlife.Add(patient);
+                    remove.Add(patient);
+                   
+                }
+               
             }
+
+            foreach (Patient patient in remove)
+            {
+                if (patients.Contains(patient))
+                {
+                    patients.Remove(patient);
+                }
+            }
+
+
         }
     }
 }
