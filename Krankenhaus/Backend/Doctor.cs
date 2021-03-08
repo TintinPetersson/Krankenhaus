@@ -25,13 +25,11 @@ namespace Krankenhaus
             get { return doctorName; }
             set { doctorName = value; }
         }
-
         public int Competence
         {
             get { return competence; }
             set { competence = value; }
         }
-
         public int Fatigue 
         {
             get { return fatigue; }
