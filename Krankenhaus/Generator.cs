@@ -42,7 +42,7 @@ namespace Krankenhaus
 
                 Doctor doctor = new Doctor();
                 doctors.Enqueue(doctor);
-                Thread.Sleep(200);
+                Thread.Sleep(250);
             }
             return doctors;
         }
@@ -55,7 +55,7 @@ namespace Krankenhaus
 
                 Patient patient = new Patient();
                 patients.Enqueue(patient);
-                Thread.Sleep(200);
+                Thread.Sleep(250);
             }
             return patients;
         }
