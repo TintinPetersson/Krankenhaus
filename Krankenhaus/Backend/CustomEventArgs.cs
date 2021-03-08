@@ -9,6 +9,5 @@ namespace Krankenhaus
     public class CustomEventArgs : EventArgs
     {
         public string timeNow { get; set; }
-        
     }
 }
