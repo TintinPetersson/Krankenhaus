@@ -54,7 +54,6 @@ namespace Krankenhaus
 
         public string GenerateDoctorName()
         {
-            string[] names = { "Aron", "Rickard", "Henriette", "Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
             string[] lastNames = { "Andersson", "Olsson", "Bark", "Karlsson", "Nyqvist", "Hedlund", "Kozmakidis", "Billgren", "Niemon", "Keroi" };
 
             string firstName = names[rand.Next(0, names.Length)];
