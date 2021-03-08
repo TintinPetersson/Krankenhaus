@@ -43,15 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generator.cs" />
-    <Compile Include="IVA.cs" />
-    <Compile Include="Queue.cs" />
-    <Compile Include="Sanatorium.cs" />
-    <Compile Include="Ticker.cs" />
-    <Compile Include="CustomEventArgs.cs" />
-    <Compile Include="Patient.cs" />
-    <Compile Include="Doctor.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Frontend\Frontend.cs" />
+    <Compile Include="Backend\Generator.cs" />
+    <Compile Include="Backend\IVA.cs" />
+    <Compile Include="Backend\Queue.cs" />
+    <Compile Include="Backend\Sanatorium.cs" />
+    <Compile Include="Backend\Ticker.cs" />
+    <Compile Include="Backend\CustomEventArgs.cs" />
+    <Compile Include="Backend\Patient.cs" />
+    <Compile Include="Backend\Doctor.cs" />
+    <Compile Include="Backend\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
