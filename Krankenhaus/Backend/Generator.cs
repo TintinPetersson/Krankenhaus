@@ -38,7 +38,7 @@ namespace Krankenhaus
             StartClock += StartTicker;
             ticker.Tick += StatusReport;
             ticker.Tick += FillHospital;
-            //ticker.Tick += CheckIfPatientsExist;
+            ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
 
