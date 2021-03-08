@@ -18,7 +18,6 @@ namespace Krankenhaus
         {
             patients = new List<Patient>();
         }
-
         public bool CheckIn(Patient patient)
         {
             if (IsFull)
@@ -29,7 +28,6 @@ namespace Krankenhaus
             patients.Add(patient);
             return true;
         }
-
         public void CheckOut()
         {
 
