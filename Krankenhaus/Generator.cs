@@ -21,6 +21,7 @@ namespace Krankenhaus
         public void Start()
         {
             ticker.Tick += ShowQueue;
+            ticker.Tick += queue.OnTick();
             StartClock += StartTicker;
 
             MakePatients();

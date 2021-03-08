@@ -9,6 +9,7 @@ namespace Krankenhaus
     class IVA
     {
         private List<Patient> patients;
+        Random rand = new Random();
         public int NumberOfBeds { get; set; }
         public int OccupiedBeds { get; set; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
@@ -27,6 +28,29 @@ namespace Krankenhaus
 
             patients.Add(patient);
             return true;
+        }
+
+        public void OnTick(object sender, EventArgs e)
+        {
+            foreach (Patient patient in patients)
+            {
+                int newSickness = rand.Next(1, 21);
+
+                if (newSickness <= 14)
+                {
+                    newSickness = patient.SicknessLevel - 1;
+                }
+                else if (newSickness <= 16)
+                {
+                    newSickness = patient.SicknessLevel + 1;
+                }
+                else
+                {
+                    newSickness = patient.SicknessLevel;
+                }
+
+                patient.SicknessLevel = newSickness;
+            }
         }
 
         public void CheckOut()

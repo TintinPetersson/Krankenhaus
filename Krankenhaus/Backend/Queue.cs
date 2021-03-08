@@ -30,7 +30,7 @@ namespace Krankenhaus
             patients.Enqueue(patient);
         }
 
-        public void ChangeSicknessLevel(object sender, EventArgs e)
+        public void GenerateSicknessLevel()
         {
             foreach(Patient patient in patients)
             {
@@ -38,6 +38,30 @@ namespace Krankenhaus
                 patient.SicknessLevel = startingSickness;
             }
         }
+
+        public void OnTick(object sender, EventArgs e)
+        {
+            foreach (Patient patient in patients)
+            {
+                int newSickness = rand.Next(1, 21);
+
+                if (newSickness == 1)
+                {
+                    newSickness = patient.SicknessLevel - 1;
+                }
+                else if (newSickness <= 17)
+                {
+                    newSickness = patient.SicknessLevel + 1;
+                }
+                else
+                {
+                    newSickness = patient.SicknessLevel;
+                }
+
+                patient.SicknessLevel = newSickness;
+            }
+        }
+
 
         public string GetAllPatients()
         {

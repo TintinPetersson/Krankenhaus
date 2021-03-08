@@ -31,7 +31,7 @@ namespace Krankenhaus
             patients.Enqueue(patient);
         }
 
-        public void ChangeSicknessLevel()
+        public void GenerateSicknessLevel()
         {
             foreach(Patient patient in patients)
             {
