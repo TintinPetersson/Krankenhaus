@@ -62,6 +62,7 @@ namespace Krankenhaus
             {
                 Patient patient = new Patient();
                 queue.AddToQueue(patient);
+                Thread.Sleep(200);
             }
         }
     }
