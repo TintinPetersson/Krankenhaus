@@ -8,11 +8,15 @@ namespace Krankenhaus
 {
     class IVA
     {
+        
         private List<Patient> patients;
         Random rand = new Random();
         public int NumberOfBeds { get; set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
+
+
+        bool DoctorPresent { get; set; }
 
         public IVA()
         {
@@ -29,9 +33,18 @@ namespace Krankenhaus
         {
             var remove = new List<Patient>();
 
+            
+            if (DoctorPresent == false)
+            {
+                DoctorArrive();
+                DoctorPresent = true;
+            }
+            
+
             foreach (Patient patient in patients)
             {
                 int newSickness = rand.Next(1, 21);
+
 
                 if (newSickness <= 14)
                 {
@@ -73,9 +86,12 @@ namespace Krankenhaus
             }
         }
 
-        public void CheckOut()
+        public Doctor DoctorArrive()
         {
+            Doctor nextDoc = Generator.doctorsQueue.Dequeue();
+            //competence = nextDoc.Competence;
 
+            return nextDoc;
         }
     }
 }

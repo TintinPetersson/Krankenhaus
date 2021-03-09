@@ -14,15 +14,18 @@ namespace Krankenhaus
         private IVA iva;
         internal static List<Patient> afterlife;
         internal static List<Patient> survivors;
+        internal static Queue<Doctor> doctorsQueue;
         private Ticker ticker;
         private Frontend menu;
         private Logger logger;
         EventHandler<EventArgs> StartClock;
         public static EventHandler<UpdateStatusArgs> UpdateStatus;
+        
 
         public Generator()
         {
             queue = new Queue();
+            doctorsQueue = new Queue<Doctor>();
             ticker = new Ticker();
             sanatorium = new Sanatorium();
             iva = new IVA();
@@ -38,19 +41,19 @@ namespace Krankenhaus
             StartClock += StartTicker;
             ticker.Tick += StatusReport;
             ticker.Tick += FillHospital;
-            //ticker.Tick += CheckIfPatientsExist;
+            ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
 
             MakePatients();
-            //Doctors
+            //Patients
 
             ShowQueue();
 
-            //ta in läkare på iva
+            doctorsQueue = MakeDoctors();
+            //Queue of doctors
 
             StartClock?.Invoke(this, EventArgs.Empty);
-
 
 
         }
