@@ -22,11 +22,8 @@ namespace Krankenhaus
         }
         public void CheckIn(Patient patient)
         {
+            patient.ArrivalToHospital = DateTime.Now;
             patients.Add(patient);
-        }
-        public void CheckOut()
-        {
-
         }
 
         public void OnTick(object sender, EventArgs e)
@@ -55,11 +52,13 @@ namespace Krankenhaus
                 if (patient.SicknessLevel <= 0)
                 {
                     Generator.survivors.Add(patient);
+                    patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
                     Generator.afterlife.Add(patient);
+                    patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                    
                 }
