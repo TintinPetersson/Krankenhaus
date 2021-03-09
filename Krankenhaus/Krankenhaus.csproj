@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\TimeTickArgs.cs" />
     <Compile Include="Backend\Logger.cs" />
     <Compile Include="Frontend\Frontend.cs" />
     <Compile Include="Backend\Generator.cs" />
