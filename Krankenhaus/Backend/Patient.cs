@@ -8,17 +8,13 @@ namespace Krankenhaus
 {
     class Patient
     {
-
         Random rand = new Random();
-
+        public DateTime ArrivalToHospital { get; set; }
+        public DateTime DepartureFromHospital { get; set; }
         public int PatientID { get; private set; }
-
         public string PatientName { get; set; }
-
         public string DateOfBirth { get; private set; }
-
         public int SicknessLevel { get; set; }
-
         public bool IsAlive { get => this.SicknessLevel < 10; }
 
         public Patient()
