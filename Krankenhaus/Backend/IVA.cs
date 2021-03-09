@@ -45,25 +45,29 @@ namespace Krankenhaus
                 DoctorPresent = true;
             }
 
+            
 
             foreach (Patient patient in patients)
             {
-                int newSickness = rand.Next(1, 21);
+                int newSickness = rand.Next(1, 100);
+                int competence = 0;
+                int competenceAdjustment = 0;
 
                 if (DoctorPresent == true)
                 {
-                    newSickness += doctor.Competence;
+                    competence = doctor.Competence;
+                    competenceAdjustment = ((competence / 2));
                 }
 
-                if (newSickness <= 14)
+                if (newSickness <= (70 + competence))
                 {
                     newSickness = patient.SicknessLevel - 1;
                 }
-                else if (newSickness <= 16)
+                else if (newSickness >= (90 + competenceAdjustment))
                 {
                     newSickness = patient.SicknessLevel + 1;
                 }
-                else
+                else 
                 {
                     newSickness = patient.SicknessLevel;
                 }
