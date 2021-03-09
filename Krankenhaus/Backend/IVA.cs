@@ -31,6 +31,7 @@ namespace Krankenhaus
 
         public void CheckIn(Patient patient)
         {
+            patient.ArrivalToHospital = DateTime.Now;
             patients.Add(patient);
         }
 
@@ -77,11 +78,13 @@ namespace Krankenhaus
                 if (patient.SicknessLevel <= 0)
                 {
                     Generator.survivors.Add(patient);
+                    patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
                     Generator.afterlife.Add(patient);
+                    patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
 
                 }
@@ -93,9 +96,8 @@ namespace Krankenhaus
             if (doctor.Fatigue == 20 && Generator.doctorsQueue.Count != 0)
             {
                doctor = NextDoctor();
-
             }
-            if (Generator.doctorsQueue.Count == 0)
+            if (Generator.doctorsQueue.Count == 0 && doctor.Fatigue == 20)
             {
                 DoctorPresent = false;
             }
