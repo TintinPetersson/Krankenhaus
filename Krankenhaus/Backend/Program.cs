@@ -13,6 +13,7 @@ namespace Krankenhaus
         {
             Generator generator = new Generator();
             generator.Start();
+
             Console.ReadLine();
         }
     }
