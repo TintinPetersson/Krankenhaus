@@ -50,12 +50,11 @@ namespace Krankenhaus
             int patientInput = menu.PatientInput();
 
             MakePatients(patientInput);
-            //Patients
             Console.Clear();
+
             ShowQueue();
 
             doctorsQueue = MakeDoctors(doctorInput);
-            //Queue of doctors
 
            
             StartClock?.Invoke(this, EventArgs.Empty);
@@ -84,7 +83,6 @@ namespace Krankenhaus
                 }
             }
         }
-
         public void StatusReport(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -101,7 +99,6 @@ namespace Krankenhaus
 
 
         }
-
         public void FillHospital(object sender, EventArgs e)
         {
             while (queue.Length != 0)
@@ -112,13 +109,14 @@ namespace Krankenhaus
                     continue;
                 }
 
-                if (!sanatorium.IsFull)
-                {
-                    sanatorium.CheckIn(queue.GetNextPatient());
-                }
-                else if (!iva.IsFull)
+                if (!iva.IsFull)
                 {
                     iva.CheckIn(queue.GetNextPatient());
+                    
+                }
+                else if (!sanatorium.IsFull)
+                {
+                    sanatorium.CheckIn(queue.GetNextPatient());
                 }
                 else
                 {
@@ -126,7 +124,6 @@ namespace Krankenhaus
                 }
             }
         }
-
         public static Queue<Doctor> MakeDoctors(int userInput)
         {
             Queue<Doctor> doctors = new Queue<Doctor>();
