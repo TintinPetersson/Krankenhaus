@@ -41,6 +41,7 @@ namespace Krankenhaus
             ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
+            ticker.TickerStop += menu.DisplayResult;
 
             MakePatients();
             //Doctors
@@ -49,7 +50,9 @@ namespace Krankenhaus
 
             //ta in läkare på iva
 
+
             StartClock?.Invoke(this, EventArgs.Empty);
+
 
 
 
@@ -81,6 +84,7 @@ namespace Krankenhaus
         {
             StringBuilder sb = new StringBuilder();
 
+            sb.AppendLine($"Tick: {ticker.tick}");
             sb.AppendLine($"Queue: {queue.Length} patients");
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");
             sb.AppendLine($"IVA: {iva.OccupiedBeds} patients");
