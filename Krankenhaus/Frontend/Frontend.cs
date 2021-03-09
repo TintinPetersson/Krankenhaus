@@ -69,10 +69,15 @@ namespace Krankenhaus
             Console.WriteLine("The people who died, moment of silence");
             Console.WriteLine("Amount of people: {0}\n", Generator.afterlife.Count);
             Console.ResetColor();
+
+
             foreach (var item in Generator.afterlife)
             {
-                Console.WriteLine("Name: {0}", item.PatientName);
+                TimeSpan ts = item.DepartureFromHospital - item.ArrivalToHospital;
+                Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days", item.PatientName, ts.Seconds);
             }
+
+
             Console.WriteLine("\n\n");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("The people who survived, hooray");
@@ -80,7 +85,8 @@ namespace Krankenhaus
             Console.ResetColor();
             foreach (var item in Generator.survivors)
             {
-                Console.WriteLine("Name: {0}", item.PatientName);
+                TimeSpan ts = item.DepartureFromHospital - item.ArrivalToHospital;
+                Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days", item.PatientName, ts.Seconds);
             }
         }
     }
