@@ -8,15 +8,20 @@ namespace Krankenhaus
 {
     class IVA
     {
-        
+        private bool doctorPresent = false;
         private List<Patient> patients;
+        private Doctor doctor;
         Random rand = new Random();
         public int NumberOfBeds { get; set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
 
 
-        bool DoctorPresent { get; set; }
+        public bool DoctorPresent
+        {
+            get { return doctorPresent; }
+            set { doctorPresent = value; }
+        }
 
         public IVA()
         {
@@ -33,18 +38,22 @@ namespace Krankenhaus
         {
             var remove = new List<Patient>();
 
-            
-            if (DoctorPresent == false)
+
+            if (DoctorPresent == false && Generator.doctorsQueue.Count != 0)
             {
-                DoctorArrive();
+                doctor = NextDoctor();
                 DoctorPresent = true;
             }
-            
+
 
             foreach (Patient patient in patients)
             {
                 int newSickness = rand.Next(1, 21);
 
+                if (DoctorPresent == true)
+                {
+                    newSickness += doctor.Competence;
+                }
 
                 if (newSickness <= 14)
                 {
@@ -70,14 +79,26 @@ namespace Krankenhaus
                 {
                     Generator.afterlife.Add(patient);
                     remove.Add(patient);
-                    
+
                 }
-               
+
             }
 
-            foreach(Patient patient in remove)
+            doctor.Fatigue += 5;
+
+            if (doctor.Fatigue == 20 && Generator.doctorsQueue.Count != 0)
             {
-                
+               doctor = NextDoctor();
+
+            }
+            if (Generator.doctorsQueue.Count == 0)
+            {
+                DoctorPresent = false;
+            }
+
+            foreach (Patient patient in remove)
+            {
+
 
                 if (patients.Contains(patient))
                 {
@@ -86,10 +107,9 @@ namespace Krankenhaus
             }
         }
 
-        public Doctor DoctorArrive()
+        public Doctor NextDoctor()
         {
             Doctor nextDoc = Generator.doctorsQueue.Dequeue();
-            //competence = nextDoc.Competence;
 
             return nextDoc;
         }

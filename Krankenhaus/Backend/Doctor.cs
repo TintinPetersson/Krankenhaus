@@ -44,7 +44,7 @@ namespace Krankenhaus
         }
         public string GenerateDoctorName()
         {
-            string[] names = { "Aron", "Rickard", "Henriette", "Katrin", "Adam", "Eva","Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
+            string[] names = { "Aron", "Rickard", "Henriette", "Katrin", "Adam", "Eva", "Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
             string[] lastNames = { "Andersson", "Olsson", "Bark", "Karlsson", "Nyqvist", "Hedlund", "Kozmakidis", "Billgren", "Niemon", "Keroi" };
 
             string firstName = names[rand.Next(0, names.Length)];
@@ -54,7 +54,7 @@ namespace Krankenhaus
         }
         public int GenerateCompetence()
         {
-            int competence = rand.Next(-10, 30);
+            int competence = rand.Next(-2, 6);
             return competence;
         }
     }

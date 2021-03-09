@@ -58,8 +58,6 @@ namespace Krankenhaus
             StartClock?.Invoke(this, EventArgs.Empty);
 
 
-
-
         }
 
         public async void StartTicker(object sender, EventArgs e)
@@ -92,6 +90,7 @@ namespace Krankenhaus
             sb.AppendLine($"Queue: {queue.Length} patients");
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");
             sb.AppendLine($"IVA: {iva.OccupiedBeds} patients");
+            sb.AppendLine($"Doctor Present: {iva.DoctorPresent}");
             sb.AppendLine($"Afterlife: {afterlife.Count}");
             sb.AppendLine($"Survivors: {survivors.Count}");
 
