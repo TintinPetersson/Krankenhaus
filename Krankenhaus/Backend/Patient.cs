@@ -32,8 +32,11 @@ namespace Krankenhaus
         
         public string GeneratePatientName()
         {
-            string[] names = { "Elias", "Karin", "Ola", "Henrik", "Peter", "Oskar", "Olga", "Pontus", "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", "Ilfa", "Anders" };
-            string[] lastNames = { "Andersson", "Olsson", "Brugg", "Karlsson", "Lokran", "Ergan", "Persson", "Bandera", "Nilsson", "Skogh" };
+            string[] names = { "Elias", "Karin", "Ola", "Henrik", "Adolf", "Peter", "Oskar", "Olga", "Pontus", 
+                "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", 
+                "Ilfa", "Anders", "Lars", "Robin", "Oskar", "Jonte", "Dessi", "Yumit", "Emanuel", "André" };
+            string[] lastNames = { "Andersson", "Olsson", "Brugg", "Karlsson", "Lokran", "Ergan", "Persson", "Bandera", "Nilsson", "Skogh", "Tillerås", "Guyler", 
+            "Kullman", "Tannenberg", "Robinsson"};
 
             string firstName = names[rand.Next(0, names.Length)];
             string lastName = lastNames[rand.Next(0, lastNames.Length)];

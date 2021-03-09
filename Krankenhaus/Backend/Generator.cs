@@ -46,15 +46,18 @@ namespace Krankenhaus
             ticker.Tick += iva.OnTick;
             ticker.TickerStop += menu.DisplayResult;
 
-            MakePatients();
-            //Patients
+            int doctorInput = menu.DoctorInput();
+            int patientInput = menu.PatientInput();
 
+            MakePatients(patientInput);
+            //Patients
+            Console.Clear();
             ShowQueue();
 
-            doctorsQueue = MakeDoctors();
+            doctorsQueue = MakeDoctors(doctorInput);
             //Queue of doctors
 
-
+           
             StartClock?.Invoke(this, EventArgs.Empty);
 
 
@@ -124,11 +127,11 @@ namespace Krankenhaus
             }
         }
 
-        public static Queue<Doctor> MakeDoctors()
+        public static Queue<Doctor> MakeDoctors(int userInput)
         {
             Queue<Doctor> doctors = new Queue<Doctor>();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < userInput; i++)
             {
                 Doctor doctor = new Doctor();
                 doctors.Enqueue(doctor);
@@ -136,9 +139,9 @@ namespace Krankenhaus
             }
             return doctors;
         }
-        public void MakePatients()
+        public void MakePatients(int userInput)
         {
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < userInput; i++)
             {
                 Patient patient = new Patient();
                 queue.AddToQueue(patient);

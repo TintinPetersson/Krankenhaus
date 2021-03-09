@@ -26,6 +26,32 @@ namespace Krankenhaus
                     return result;
                 }
             } while (true);
+
+        }
+        public int DoctorInput()
+        {
+            do
+            {
+                Console.WriteLine("How many doctors should there be? [1-10]");
+                bool check = int.TryParse(Console.ReadLine(), out int result);
+                if (result <= 10 && result >= 1)
+                {
+                    return result;
+                }
+            } while (true);
+
+        }
+        public int PatientInput()
+        {
+            do
+            {
+                Console.WriteLine("How many patients do you want? [5-30]");
+                bool check = int.TryParse(Console.ReadLine(), out int result);
+                if (result <= 30 && result >= 5)
+                {
+                    return result;
+                }
+            } while (true);
         }
 
         public void PrintStatusReport(object sender, UpdateStatusArgs e)
