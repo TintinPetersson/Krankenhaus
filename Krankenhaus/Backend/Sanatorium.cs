@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Krankenhaus.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace Krankenhaus
         private Logger logger;
         private int improvementPercentage;
         private int deteriorationPercentage;
+        private AfterLife afterlife;
+        private Survivors survivors;
 
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
@@ -24,6 +27,8 @@ namespace Krankenhaus
             patients = new List<Patient>();
             NumberOfBeds = 10;
             logger = new Logger();
+            afterlife = AfterLife.GetInstance();
+            survivors = Survivors.GetInstance();
             fileName = "Sanatorium.txt";
             improvementPercentage = 35;
             deteriorationPercentage = 50;
@@ -38,12 +43,14 @@ namespace Krankenhaus
         {
             if (patients.Count != 0)
             {
-                UpdatePatients();
                 await SaveToFile();
+                await afterlife.SaveToFile();
+                await survivors.SaveToFile();
+                await UpdatePatients();
             }
         }
 
-        private void UpdatePatients()
+        private async Task UpdatePatients()
         {
             var remove = new List<Patient>();
 
@@ -64,17 +71,22 @@ namespace Krankenhaus
 
                 if (patient.SicknessLevel <= 0)
                 {
-                    Generator.survivors.Add(patient);
+                    survivors.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
-                    Generator.afterlife.Add(patient);
+                    afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
 
+            }
+
+            if (patients.Count == 0)
+            {
+                await SaveToFile();
             }
 
             foreach (Patient patient in remove)

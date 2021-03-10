@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Krankenhaus.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,23 +13,24 @@ namespace Krankenhaus
         private Queue queue;
         private Sanatorium sanatorium;
         private IVA iva;
-        internal static List<Patient> afterlife;
-        internal static List<Patient> survivors;
         private Ticker ticker;
         private Frontend menu;
         private Logger logger;
+        private AfterLife afterlife;
+        private Survivors survivors;
         EventHandler<EventArgs> StartClock;
         public static EventHandler<UpdateStatusArgs> UpdateStatus;
+        private string fileName;
         
-
         public Generator()
         {
+            fileName = "KrankenhausReport.txt";
             queue = new Queue();
+            afterlife = AfterLife.GetInstance();
             ticker = new Ticker();
             sanatorium = new Sanatorium();
             iva = new IVA();
-            afterlife = new List<Patient>();
-            survivors = new List<Patient>();
+            survivors = Survivors.GetInstance();
             menu = new Frontend();
             logger = new Logger();
         }
@@ -42,7 +44,11 @@ namespace Krankenhaus
             ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
+            UpdateStatus += SaveToFile;
+            //ticker.Tick += survivors.OnTick;
+            //ticker.Tick += afterlife.OnTick;
             ticker.TickerStop += menu.DisplayResult;
+           
 
             int doctorInput = menu.DoctorInput();
             int patientInput = menu.PatientInput();
@@ -78,7 +84,7 @@ namespace Krankenhaus
                 }
             }
         }
-        public void StatusReport(object sender, EventArgs e)
+        public async void StatusReport(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -87,10 +93,17 @@ namespace Krankenhaus
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");
             sb.AppendLine($"IVA: {iva.OccupiedBeds} patients");
             sb.AppendLine($"Doctor Present: {iva.IsDoctorPresent}");
-            sb.AppendLine($"Afterlife: {afterlife.Count}");
-            sb.AppendLine($"Survivors: {survivors.Count}");
+            sb.AppendLine($"Afterlife: {afterlife.Length}");
+            sb.AppendLine($"Survivors: {survivors.Length}");
 
-            UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString())); // Kan använda LogToFile här också
+            
+            UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString()));
+            await logger.LogToFile("Ticker.txt", ticker.tick.ToString(), false);
+        }
+
+        public async void SaveToFile(object sender, UpdateStatusArgs e)
+        {
+            await logger.LogToFile(fileName, e.Status, true);
         }
 
         public async void FillHospital(object sender, EventArgs e)
@@ -118,7 +131,6 @@ namespace Krankenhaus
                 }
             }
 
-            //
             if (queue.Length != 0)
             {
                 await queue.SaveToFile();

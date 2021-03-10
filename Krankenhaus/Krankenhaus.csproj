@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\AfterLife.cs" />
+    <Compile Include="Backend\Survivors.cs" />
     <Compile Include="Backend\TimeTickArgs.cs" />
     <Compile Include="Backend\Logger.cs" />
     <Compile Include="Frontend\Frontend.cs" />

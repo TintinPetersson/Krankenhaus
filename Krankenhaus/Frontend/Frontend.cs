@@ -9,9 +9,13 @@ namespace Krankenhaus
 {
     class Frontend
     {
+        private AfterLife afterlife;
+        private Survivors survivors;
         public Frontend()
         {
             Generator.UpdateStatus += PrintStatusReport;
+            afterlife = AfterLife.GetInstance();
+            survivors = Survivors.GetInstance();
         }
 
         public int Menu()
@@ -66,23 +70,36 @@ namespace Krankenhaus
             Console.WriteLine("Start time was: {0}\n\n", t.StartTime);
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("The people who died, moment of silence");
-            Console.WriteLine("Amount of people: {0}\n", Generator.afterlife.Count);
+            Console.WriteLine("Amount of people: {0}\n", afterlife.Length);
             Console.ResetColor();
 
 
-            foreach (var item in Generator.afterlife)
+            var dead = afterlife.GetPatients();
+
+            foreach (var item in dead)
             {
                 TimeSpan ts = item.DepartureFromHospital - item.ArrivalToHospital;
-                Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days", item.PatientName, ts.Seconds);
+
+                if (ts.Seconds < 1)
+                {
+                    Console.WriteLine("Name: {0,-20} | Time spent in hospital: None, died in queue ", item.PatientName);
+                }
+                else
+                {
+                    Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days ", item.PatientName, ts.Seconds);
+                }
+                
             }
 
 
             Console.WriteLine("\n\n");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("The people who survived, hooray");
-            Console.WriteLine("Amount of people: {0}\n", Generator.survivors.Count);
+            Console.WriteLine("Amount of people: {0}\n", survivors.Length);
             Console.ResetColor();
-            foreach (var item in Generator.survivors)
+
+            var survived = survivors.GetPatients();
+            foreach (var item in survived)
             {
                 TimeSpan ts = item.DepartureFromHospital - item.ArrivalToHospital;
                 Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days", item.PatientName, ts.Seconds);

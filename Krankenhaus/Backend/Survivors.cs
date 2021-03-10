@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 
 namespace Krankenhaus.Backend
 {
-    class AfterLife
+    class Survivors
     {
         private List<Patient> patients;
         private Logger logger;
         private string fileName;
-        private static AfterLife afterLife;
+        private static Survivors survivors;
 
         public int Length { get => patients.Count; }
 
-        private AfterLife()
+        private Survivors()
         {
             logger = new Logger();
             patients = new List<Patient>();
-            fileName = "Afterlife.txt";
+            fileName = "Survivors.txt";
         }
 
-        public static AfterLife GetInstance()
+        public static Survivors GetInstance()
         {
-            if (afterLife == null)
+            if (survivors == null)
             {
-                afterLife = new AfterLife();
+                survivors = new Survivors();
             }
 
-            return afterLife;
+            return survivors;
         }
 
         public void Add(Patient patient)

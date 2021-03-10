@@ -60,7 +60,7 @@ namespace Krankenhaus
 
         public override string ToString()
         {
-            return $"Name: {this.DoctorName} Competence: {this.Competence} Fatigue: {this.Fatigue}";
+            return $"#{this.DoctorName}#{this.Competence}#{this.Fatigue}";
         }
     }
 }

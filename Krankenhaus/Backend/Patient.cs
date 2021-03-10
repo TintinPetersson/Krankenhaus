@@ -58,8 +58,8 @@ namespace Krankenhaus
 
         public override string ToString()
         {
-            return $"Name: {this.PatientName} Sickness level: {this.SicknessLevel} Date of birth: {this.DateOfBirth} Is alive: {this.IsAlive} " +
-                $"Time of arrival: {this.ArrivalToHospital} Time of departure: {this.DepartureFromHospital}";
+            return $"{this.PatientName}#{this.SicknessLevel}#{this.DateOfBirth}#{this.IsAlive}" +
+                $"#{this.ArrivalToHospital}#{this.DepartureFromHospital}";
         }
     }
 }

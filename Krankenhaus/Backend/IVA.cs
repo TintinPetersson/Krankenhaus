@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Krankenhaus.Backend;
 
 namespace Krankenhaus
 {
@@ -19,6 +20,8 @@ namespace Krankenhaus
         private Random rand = new Random();
         private int improvementPercentage;
         private int deteriorationPercentage;
+        private AfterLife afterlife;
+        private Survivors survivors;
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
@@ -33,6 +36,8 @@ namespace Krankenhaus
             logger = new Logger();
             patients = new List<Patient>();
             doctors = new Queue<Doctor>();
+            afterlife = AfterLife.GetInstance();
+            survivors = Survivors.GetInstance();
             NumberOfBeds = 5;
             fileName = "IVA.txt";
             doctorsFile = "Doctors.txt";
@@ -66,6 +71,10 @@ namespace Krankenhaus
                     await AdjustDoctors();
                 }
                 await SaveToFile();
+            }
+            else
+            {
+                IsDoctorPresent = false;
             }
         }
 
@@ -106,16 +115,21 @@ namespace Krankenhaus
 
                 if (patient.SicknessLevel <= 0)
                 {
-                    Generator.survivors.Add(patient);
+                    survivors.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
-                    Generator.afterlife.Add(patient);
+                    afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
+            }
+
+            if (patients.Count == 0)
+            {
+                await SaveToFile();
             }
 
             foreach (Patient patient in remove)
@@ -129,7 +143,6 @@ namespace Krankenhaus
 
         private async Task AdjustDoctors()
         {
-
             doctor.Fatigue += 5;
 
             if (doctor.Fatigue == 20)
@@ -144,7 +157,6 @@ namespace Krankenhaus
                     IsDoctorPresent = false;
                 }
             }
-
         }
 
         private async Task SaveToFile()
