@@ -17,6 +17,7 @@ namespace Krankenhaus
         private int deteriorationPercentage;
         private AfterLife afterlife;
         private Survivors survivors;
+        private ReadFromFile readFromFile;
 
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
@@ -32,6 +33,7 @@ namespace Krankenhaus
             fileName = "Sanatorium.txt";
             improvementPercentage = 35;
             deteriorationPercentage = 50;
+            readFromFile = new ReadFromFile();
         }
         public void CheckIn(Patient patient)
         {
@@ -97,6 +99,18 @@ namespace Krankenhaus
                 }
             }
         }
+
+        internal void ReadData(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(fileName);
+
+            foreach (var person in data)
+            {
+                patients.Add((Patient)person);
+            }
+
+        }
+
         private async Task SaveToFile()
         {
             if (patients.Count == 0)

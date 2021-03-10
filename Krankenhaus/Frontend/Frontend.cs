@@ -11,11 +11,35 @@ namespace Krankenhaus
     {
         private AfterLife afterlife;
         private Survivors survivors;
+        private ReadFromFile read;
         public Frontend()
         {
             Generator.UpdateStatus += PrintStatusReport;
             afterlife = AfterLife.GetInstance();
             survivors = Survivors.GetInstance();
+            read = new ReadFromFile();
+        }
+
+        public bool ReadData()
+        {
+            if (read.SessionExists())
+            {
+                while (true)
+                {
+                    Console.WriteLine("There is an existing file. Do you want to use it? Y / N ");
+                    string answer = Console.ReadLine().ToUpper();
+
+                    if (answer == "Y")
+                    {
+                        return true;
+                    }
+                    else if (answer == "N")
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
         }
 
         public int Menu()

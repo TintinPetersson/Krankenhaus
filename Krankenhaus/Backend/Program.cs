@@ -11,6 +11,7 @@ namespace Krankenhaus
     {
         static void Main(string[] args)
         {
+            //bara iva clearar
             Generator generator = new Generator();
             generator.Start();
 

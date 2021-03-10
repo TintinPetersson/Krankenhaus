@@ -15,6 +15,12 @@ namespace Krankenhaus
         public event EventHandler Tick;
         public event EventHandler<TimeTickArgs> TickerStop;
         private bool keepTicking;
+        private Logger logger;
+
+        public Ticker()
+        {
+            logger = new Logger();
+        }
         public async Task Ticking(int time)
         {
             keepTicking = true;
@@ -31,10 +37,11 @@ namespace Krankenhaus
             return;
         }
 
-        public void StopTick()
+        public async Task StopTick()
         {
             keepTicking = false;
             TickerStop?.Invoke(this, new TimeTickArgs(startTime, tick));
+            await logger.LogToFile("Ticker.txt", " ", false);
         }
     }
 }

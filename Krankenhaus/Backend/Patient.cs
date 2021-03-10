@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Krankenhaus.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,20 +7,27 @@ using System.Threading.Tasks;
 
 namespace Krankenhaus
 {
-    class Patient
+    class Patient : Person
     {
         Random rand = new Random();
         public DateTime ArrivalToHospital { get; set; }
         public DateTime DepartureFromHospital { get; set; }
-        public int PatientID { get; private set; }
         public string PatientName { get; set; }
         public string DateOfBirth { get; private set; }
         public int SicknessLevel { get; set; }
         public bool IsAlive { get => this.SicknessLevel < 10; }
 
+        public Patient(string name, int sickness, string birth, DateTime arrival, DateTime departure)
+        {
+            this.PatientName = name;
+            this.SicknessLevel = sickness;
+            this.DateOfBirth = birth;
+            this.ArrivalToHospital = arrival;
+            this.DepartureFromHospital = departure;
+        }
+
         public Patient()
         {
-            this.PatientID = 0;
             this.PatientName = GeneratePatientName();
             this.DateOfBirth = GenerateBirthDate();
             this.SicknessLevel = GenerateSicknessLevel();
@@ -58,7 +66,7 @@ namespace Krankenhaus
 
         public override string ToString()
         {
-            return $"{this.PatientName}#{this.SicknessLevel}#{this.DateOfBirth}#{this.IsAlive}" +
+            return $"Patient#{this.PatientName}#{this.SicknessLevel}#{this.DateOfBirth}#{this.IsAlive}" +
                 $"#{this.ArrivalToHospital}#{this.DepartureFromHospital}";
         }
     }
