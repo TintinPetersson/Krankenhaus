@@ -55,5 +55,11 @@ namespace Krankenhaus
 
             return date;
         }
+
+        public override string ToString()
+        {
+            return $"Name: {this.PatientName} Sickness level: {this.SicknessLevel} Date of birth: {this.DateOfBirth} Is alive: {this.IsAlive} " +
+                $"Time of arrival: {this.ArrivalToHospital} Time of departure: {this.DepartureFromHospital}";
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Krankenhaus
 {
@@ -10,23 +11,43 @@ namespace Krankenhaus
     {
         private bool doctorPresent = false;
         private List<Patient> patients;
+        private Queue<Doctor> doctors;
         private Doctor doctor;
-        Random rand = new Random();
-        public int NumberOfBeds { get; set; }
+        private string fileName;
+        private string doctorsFile;
+        private Logger logger;
+        private Random rand = new Random();
+        private int improvementPercentage;
+        private int deteriorationPercentage;
+        public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
-
-
-        public bool DoctorPresent
+        public bool IsDoctorPresent
         {
             get { return doctorPresent; }
-            set { doctorPresent = value; }
+            private set { doctorPresent = value; }
         }
 
         public IVA()
         {
+            logger = new Logger();
             patients = new List<Patient>();
+            doctors = new Queue<Doctor>();
             NumberOfBeds = 5;
+            fileName = "IVA.txt";
+            doctorsFile = "Doctors.txt";
+            improvementPercentage = 70;
+            deteriorationPercentage = 10;
+        }
+
+        public void MakeDoctors(int userInput)
+        {
+            for (int i = 0; i < userInput; i++)
+            {
+                Doctor doctor = new Doctor();
+                doctors.Enqueue(doctor);
+                Thread.Sleep(250);
+            }
         }
 
         public void CheckIn(Patient patient)
@@ -35,45 +56,53 @@ namespace Krankenhaus
             patients.Add(patient);
         }
 
-        public void OnTick(object sender, EventArgs e)
+        public async void OnTick(object sender, EventArgs e)
+        {
+            if (patients.Count != 0)
+            {
+                await UpdatePatients();
+                if (IsDoctorPresent)
+                {
+                    await AdjustDoctors();
+                }
+                await SaveToFile();
+            }
+        }
+
+        private async Task UpdatePatients()
         {
             var remove = new List<Patient>();
 
-
-            if (DoctorPresent == false && Generator.doctorsQueue.Count != 0)
+            if ((IsDoctorPresent == false) && (doctors.Count != 0))
             {
                 doctor = NextDoctor();
-                DoctorPresent = true;
+                IsDoctorPresent = true;
+                await SaveDoctorsToFile();
             }
-
-            
 
             foreach (Patient patient in patients)
             {
-                int newSickness = rand.Next(1, 100);
+                int chance = rand.Next(1, 101);
                 int competence = 0;
-                int competenceAdjustment = 0;
+                int percentageAdjustment = 0;
 
-                if (DoctorPresent == true)
+                if (IsDoctorPresent == true)
                 {
                     competence = doctor.Competence;
-                    competenceAdjustment = ((competence / 2));
+                    percentageAdjustment = ((competence / 2));
                 }
 
-                if (newSickness <= (70 + competence))
+                if (chance <= (improvementPercentage + competence))
                 {
-                    newSickness = patient.SicknessLevel - 1;
+                    patient.SicknessLevel -= 1;
                 }
-                else if (newSickness >= (90 + competenceAdjustment))
+                else if (chance >= (improvementPercentage + deteriorationPercentage - percentageAdjustment))
                 {
-                    newSickness = patient.SicknessLevel + 1;
-                }
-                else 
-                {
-                    newSickness = patient.SicknessLevel;
+                    patient.SicknessLevel += 1;
                 }
 
-                patient.SicknessLevel = newSickness;
+                // If none of these conditions are met, the patient will keep its current sickness level
+
 
                 if (patient.SicknessLevel <= 0)
                 {
@@ -86,26 +115,11 @@ namespace Krankenhaus
                     Generator.afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
-
                 }
-
-            }
-
-            doctor.Fatigue += 5;
-
-            if (doctor.Fatigue == 20 && Generator.doctorsQueue.Count != 0)
-            {
-               doctor = NextDoctor();
-            }
-            if (Generator.doctorsQueue.Count == 0 && doctor.Fatigue == 20)
-            {
-                DoctorPresent = false;
             }
 
             foreach (Patient patient in remove)
             {
-
-
                 if (patients.Contains(patient))
                 {
                     patients.Remove(patient);
@@ -113,11 +127,75 @@ namespace Krankenhaus
             }
         }
 
-        public Doctor NextDoctor()
+        private async Task AdjustDoctors()
         {
-            Doctor nextDoc = Generator.doctorsQueue.Dequeue();
 
-            return nextDoc;
+            doctor.Fatigue += 5;
+
+            if (doctor.Fatigue == 20)
+            {
+                if (doctors.Count != 0)
+                {
+                    doctor = NextDoctor();
+                    await SaveDoctorsToFile();
+                }
+                else
+                {
+                    IsDoctorPresent = false;
+                }
+            }
+
+        }
+
+        private async Task SaveToFile()
+        {
+            if (patients.Count == 0)
+            {
+                await logger.LogToFile(fileName, " ", false);
+            }
+            else
+            {
+                bool appendLine = false;
+                if (IsDoctorPresent)
+                {
+                    await logger.LogToFile(fileName, "Extra doctor: " + doctor.ToString(), appendLine);
+                    appendLine = true;
+                }
+
+                if (patients.Count == 0)
+                {
+                    await logger.LogToFile(fileName, " ", false);
+                }
+                else
+                {
+                    foreach (Patient patient in patients)
+                    {
+                        await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                        appendLine = true;
+                    }
+                }
+            }
+        }
+        private async Task SaveDoctorsToFile()
+        {
+            bool appendLine = false;
+
+            if (doctors.Count == 0)
+            {
+                await logger.LogToFile(doctorsFile, " ", appendLine);
+            }
+            else
+            {
+                foreach (Doctor doctor in doctors)
+                {
+                    await logger.LogToFile(doctorsFile, doctor.ToString(), appendLine);
+                    appendLine = true;
+                }
+            }
+        }
+        private Doctor NextDoctor()
+        {
+            return doctors.Dequeue();
         }
     }
 }

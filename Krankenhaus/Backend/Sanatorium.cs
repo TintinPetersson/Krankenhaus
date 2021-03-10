@@ -9,9 +9,13 @@ namespace Krankenhaus
     class Sanatorium
     {
         private List<Patient> patients;
-        Random rand = new Random();
+        private string fileName;
+        private Random rand = new Random();
+        private Logger logger;
+        private int improvementPercentage;
+        private int deteriorationPercentage;
 
-        public int NumberOfBeds { get; set; }
+        public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
 
@@ -19,6 +23,10 @@ namespace Krankenhaus
         {
             patients = new List<Patient>();
             NumberOfBeds = 10;
+            logger = new Logger();
+            fileName = "Sanatorium.txt";
+            improvementPercentage = 35;
+            deteriorationPercentage = 50;
         }
         public void CheckIn(Patient patient)
         {
@@ -26,28 +34,33 @@ namespace Krankenhaus
             patients.Add(patient);
         }
 
-        public void OnTick(object sender, EventArgs e)
+        public async void OnTick(object sender, EventArgs e)
+        {
+            if (patients.Count != 0)
+            {
+                UpdatePatients();
+                await SaveToFile();
+            }
+        }
+
+        private void UpdatePatients()
         {
             var remove = new List<Patient>();
 
             foreach (Patient patient in patients)
             {
-                int newSickness = rand.Next(1, 21);
+                int chance = rand.Next(1, 101);
 
-                if (newSickness <= 7)
+                if (chance <= improvementPercentage)
                 {
-                    newSickness = patient.SicknessLevel - 1;
+                    patient.SicknessLevel -= 1;
                 }
-                else if (newSickness <= 17)
+                else if (chance <= improvementPercentage + deteriorationPercentage)
                 {
-                    newSickness = patient.SicknessLevel + 1;
-                }
-                else
-                {
-                    newSickness = patient.SicknessLevel;
+                    patient.SicknessLevel += 1;
                 }
 
-                patient.SicknessLevel = newSickness;
+                // If none of these conditions are met, the patient will keep its current sickness level
 
                 if (patient.SicknessLevel <= 0)
                 {
@@ -60,9 +73,8 @@ namespace Krankenhaus
                     Generator.afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
-                   
                 }
-               
+
             }
 
             foreach (Patient patient in remove)
@@ -72,8 +84,22 @@ namespace Krankenhaus
                     patients.Remove(patient);
                 }
             }
-
-
+        }
+        private async Task SaveToFile()
+        {
+            if (patients.Count == 0)
+            {
+                await logger.LogToFile(fileName, " ", false);
+            }
+            else
+            {
+                bool appendLine = false;
+                foreach (Patient patient in patients)
+                {
+                    await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                    appendLine = true;
+                }
+            }
         }
     }
 }

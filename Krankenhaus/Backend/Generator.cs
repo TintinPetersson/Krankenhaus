@@ -14,7 +14,6 @@ namespace Krankenhaus
         private IVA iva;
         internal static List<Patient> afterlife;
         internal static List<Patient> survivors;
-        internal static Queue<Doctor> doctorsQueue;
         private Ticker ticker;
         private Frontend menu;
         private Logger logger;
@@ -25,7 +24,6 @@ namespace Krankenhaus
         public Generator()
         {
             queue = new Queue();
-            doctorsQueue = new Queue<Doctor>();
             ticker = new Ticker();
             sanatorium = new Sanatorium();
             iva = new IVA();
@@ -54,12 +52,9 @@ namespace Krankenhaus
 
             ShowQueue();
 
-            doctorsQueue = MakeDoctors(doctorInput);
+            iva.MakeDoctors(doctorInput);
 
-           
             StartClock?.Invoke(this, EventArgs.Empty);
-
-
         }
 
         public async void StartTicker(object sender, EventArgs e)
@@ -91,15 +86,14 @@ namespace Krankenhaus
             sb.AppendLine($"Queue: {queue.Length} patients");
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");
             sb.AppendLine($"IVA: {iva.OccupiedBeds} patients");
-            sb.AppendLine($"Doctor Present: {iva.DoctorPresent}");
+            sb.AppendLine($"Doctor Present: {iva.IsDoctorPresent}");
             sb.AppendLine($"Afterlife: {afterlife.Count}");
             sb.AppendLine($"Survivors: {survivors.Count}");
 
-            UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString()));
-
-
+            UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString())); // Kan använda LogToFile här också
         }
-        public void FillHospital(object sender, EventArgs e)
+
+        public async void FillHospital(object sender, EventArgs e)
         {
             while (queue.Length != 0)
             {
@@ -123,19 +117,14 @@ namespace Krankenhaus
                     break;
                 }
             }
-        }
-        public static Queue<Doctor> MakeDoctors(int userInput)
-        {
-            Queue<Doctor> doctors = new Queue<Doctor>();
 
-            for (int i = 0; i < userInput; i++)
+            //
+            if (queue.Length != 0)
             {
-                Doctor doctor = new Doctor();
-                doctors.Enqueue(doctor);
-                Thread.Sleep(250);
+                await queue.SaveToFile();
             }
-            return doctors;
         }
+
         public void MakePatients(int userInput)
         {
             for (int i = 0; i < userInput; i++)

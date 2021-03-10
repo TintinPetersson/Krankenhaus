@@ -9,18 +9,25 @@ namespace Krankenhaus
     class Queue
     {
         private Queue<Patient> patients;
-        Random rand = new Random();
+        private Random rand = new Random();
+        private string fileName;
+        private Logger logger;
+        private int improvementPercentage;
+        private int deteriorationPercentage;
 
         public Queue()
         {
             patients = new Queue<Patient>();
+            logger = new Logger();
+            fileName = "Queue.txt";
+            improvementPercentage = 5;
+            deteriorationPercentage = 80;
         }
 
         public int Length { get => patients.Count; }
 
         public Patient GetNextPatient()
         {
-            //try catch
             return patients.Dequeue();
         }
 
@@ -28,48 +35,58 @@ namespace Krankenhaus
         {
             return patients.Peek();
         }
-
+        
         public void AddToQueue(Patient patient)
         {
-            //try catch
             patients.Enqueue(patient);
-        }
-
-        public void GenerateSicknessLevel()
-        {
-            foreach(Patient patient in patients)
-            {
-                int startingSickness = rand.Next(1, 9);
-                patient.SicknessLevel = startingSickness;
-            }
         }
 
         public void OnTick(object sender, EventArgs e)
         {
+            if (patients.Count != 0)
+            {
+                UpdatePatients();
+            }
+        }
+
+        private void UpdatePatients()
+        {
             foreach (Patient patient in patients)
             {
-                int newSickness = rand.Next(1, 21);
+                int chance = rand.Next(1, 101);
 
-                if (newSickness == 1)
+                if (patient.SicknessLevel == 0 || patient.SicknessLevel == 10)
                 {
-                    newSickness = patient.SicknessLevel - 1;
+                    patient.SicknessLevel = patient.SicknessLevel;
                 }
-                else if (newSickness <= 17)
+                else if (chance <= improvementPercentage)
                 {
-                    newSickness = patient.SicknessLevel + 1;
+                    patient.SicknessLevel -= 1;
                 }
-                else if (patient.SicknessLevel == 0)
+                else if (chance <= (improvementPercentage + deteriorationPercentage))
                 {
-                    newSickness = patient.SicknessLevel;
-                }
-                else
-                {
-                    newSickness = patient.SicknessLevel;
+                    patient.SicknessLevel += 1;
                 }
 
-                patient.SicknessLevel = newSickness;
+                // If none of these conditions are met, the patient will keep its current sickness level
+            }
+        }
 
-                
+        public async Task SaveToFile()
+        {
+            bool appendLine = false;
+
+            if (patients.Count == 0)
+            {
+                await logger.LogToFile(fileName, " ", false);
+            }
+            else
+            {
+                foreach (Patient patient in patients)
+                {
+                    await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                    appendLine = true;
+                }
             }
         }
 

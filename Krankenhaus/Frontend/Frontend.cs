@@ -12,7 +12,6 @@ namespace Krankenhaus
         public Frontend()
         {
             Generator.UpdateStatus += PrintStatusReport;
-
         }
 
         public int Menu()

@@ -18,17 +18,17 @@ namespace Krankenhaus
         public int DoctorID
         {
             get { return doctorId; }
-            set { doctorId = value; }
+            private set { doctorId = value; }
         }
         public string DoctorName
         {
             get { return doctorName; }
-            set { doctorName = value; }
+            private set { doctorName = value; }
         }
         public int Competence
         {
             get { return competence; }
-            set { competence = value; }
+            private set { competence = value; }
         }
         public int Fatigue 
         {
@@ -42,7 +42,7 @@ namespace Krankenhaus
             this.Competence = GenerateCompetence();
             this.Fatigue = 0;
         }
-        public string GenerateDoctorName()
+        private string GenerateDoctorName()
         {
             string[] names = { "Aron", "Rickard", "Henriette", "Katrin", "Adam", "Eva", "Jeanette", "Erik", "Sara", "Eva", "Boris", "Lena", "Adam", "Adolfo", "Yngve", "Kerstin" };
             string[] lastNames = { "Andersson", "Olsson", "Bark", "Karlsson", "Nyqvist", "Hedlund", "Kozmakidis", "Billgren", "Niemon", "Keroi" };
@@ -52,10 +52,15 @@ namespace Krankenhaus
 
             return firstName + " " + lastName;
         }
-        public int GenerateCompetence()
+        private int GenerateCompetence()
         {
             int competence = rand.Next(-2, 6);
             return competence;
+        }
+
+        public override string ToString()
+        {
+            return $"Name: {this.DoctorName} Competence: {this.Competence} Fatigue: {this.Fatigue}";
         }
     }
 }
