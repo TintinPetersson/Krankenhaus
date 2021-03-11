@@ -48,8 +48,6 @@ namespace Krankenhaus
             if (patients.Count != 0)
             {
                 await SaveToFile();
-                //await afterlife.SaveToFile();
-                //await survivors.SaveToFile();
                 await UpdatePatients();
             }
         }

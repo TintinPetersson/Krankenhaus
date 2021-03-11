@@ -41,7 +41,7 @@ namespace Krankenhaus
                 "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", "Conny", "Sonny", "Berra",
                 "Ilfa", "Anders", "Lars", "Robin", "Oskar", "Jonte", "Dessi", "Yumit", "Emanuel", "André" };
             string[] lastNames = { "Andersson", "Olsson", "Brugg", "Karlsson", "Lokran", "Ergan", "Persson", "Bandera", "Nilsson", "Skogh", "Tillerås", "Guyler", 
-            "Kullman", "Tannenberg", "Robinsson", "Petersson", "Eriksson", "Berg", "Baggins", "Boufadene", "Gamgee"};
+            "Kullman", "Tannenberg", "Robinsson", "Petersson", "Eriksson", "Berg", "Baggins", "Boufadene", "Gamgee", "Johansson", "Hansson"};
 
             string firstName = names[rand.Next(0, names.Length)];
             string lastName = lastNames[rand.Next(0, lastNames.Length)];

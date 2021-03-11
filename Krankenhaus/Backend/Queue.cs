@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Krankenhaus.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Krankenhaus
         private Logger logger;
         private int improvementPercentage;
         private int deteriorationPercentage;
+        private ReadFromFile readFromFile;
 
         public Queue()
         {
@@ -22,6 +24,7 @@ namespace Krankenhaus
             fileName = "Queue.txt";
             improvementPercentage = 5;
             deteriorationPercentage = 80;
+            readFromFile = new ReadFromFile();
             Saving = false;
         }
 
@@ -73,6 +76,16 @@ namespace Krankenhaus
                 }
 
                 // If none of these conditions are met, the patient will keep its current sickness level
+            }
+        }
+
+        internal void ReadData(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(fileName);
+
+            foreach (var person in data)
+            { 
+                patients.Enqueue((Patient)person);
             }
         }
 

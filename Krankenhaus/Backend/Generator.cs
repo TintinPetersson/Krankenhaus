@@ -18,9 +18,11 @@ namespace Krankenhaus
         private Logger logger;
         private AfterLife afterlife;
         private Survivors survivors;
+
         private EventHandler<EventArgs> StartClock;
         public static EventHandler<UpdateStatusArgs> UpdateStatus;
         public EventHandler<EventArgs> FileReading;
+
         private string fileName;
         private int ticks = 0;
         
@@ -39,17 +41,20 @@ namespace Krankenhaus
 
         public void Start()
         {
-            ticker.Tick += queue.OnTick;
+            #region Prenumerationer
             StartClock += StartTicker;
+
+            ticker.Tick += queue.OnTick;
             ticker.Tick += StatusReport;
             ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
-            UpdateStatus += SaveToFile;
             ticker.Tick += survivors.OnTick;
             ticker.Tick += afterlife.OnTick;
-            ticker.TickerStop += menu.DisplayResult;
 
+            UpdateStatus += SaveToFile;
+
+            ticker.TickerStop += menu.DisplayResult;
             ticker.TickerStop += iva.ClearDoctorsFile;
             ticker.TickerStop += afterlife.ClearFile;
             ticker.TickerStop += survivors.ClearFile;
@@ -59,7 +64,8 @@ namespace Krankenhaus
             FileReading += iva.ReadDoctors;
             FileReading += afterlife.ReadData;
             FileReading += survivors.ReadData;
-            //FileReading += queue.ReadData;
+            FileReading += queue.ReadData;
+            #endregion
 
 
             if (menu.ReadData(out int ticksReturn))
