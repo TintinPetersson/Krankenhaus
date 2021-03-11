@@ -1,9 +1,5 @@
 ﻿using Krankenhaus.Backend;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Krankenhaus
@@ -29,6 +25,7 @@ namespace Krankenhaus
 
             while (keepTicking)
             {
+                Console.Clear();
                 Tick?.Invoke(this, EventArgs.Empty);
                 tick++;
                 await Task.Delay(time * 1000);

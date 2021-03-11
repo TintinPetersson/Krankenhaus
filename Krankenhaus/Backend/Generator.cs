@@ -1,7 +1,5 @@
 ﻿using Krankenhaus.Backend;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -128,7 +126,6 @@ namespace Krankenhaus
         private async void StatusReport(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-
             sb.AppendLine($"Tick: {ticker.tick + ticks}");
             sb.AppendLine($"Queue: {queue.Length} patients");
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");

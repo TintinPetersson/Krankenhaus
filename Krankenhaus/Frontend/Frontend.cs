@@ -1,9 +1,6 @@
 ﻿using Krankenhaus.Backend;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Krankenhaus
 {
@@ -32,7 +29,15 @@ namespace Krankenhaus
             {
                 while (true)
                 {
-                    Console.WriteLine("There is an existing file. Do you want to use it? Y / N ");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.Write("There is an existing file. Do you want to use it? ");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Y ");
+                    Console.ResetColor();
+                    Console.Write("/ ");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("N");
+                    Console.ResetColor();
                     string answer = Console.ReadLine().ToUpper();
 
                     if (answer == "Y")
@@ -57,7 +62,14 @@ namespace Krankenhaus
         {
             do
             {
-                Console.WriteLine("Choose the speed of the program [1-10 seconds]: ");
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("Choose the speed of the program [");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("1 - 10 seconds");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("]: ");
+                Console.ResetColor();
                 bool check = int.TryParse(Console.ReadLine(), out int result);
                 if (result <= 10 && result >= 1)
                 {
@@ -73,7 +85,13 @@ namespace Krankenhaus
         {
             do
             {
-                Console.WriteLine("How many doctors should there be? [1-10]");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("How many doctors should there be [");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("1 - 10");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("]:");
+                Console.ResetColor();
                 bool check = int.TryParse(Console.ReadLine(), out int result);
                 if (result <= 10 && result >= 1)
                 {
@@ -90,7 +108,13 @@ namespace Krankenhaus
         {
             do
             {
-                Console.WriteLine("How many patients do you want? [5-30]");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("How many patients do you want [");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("5 - 30");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("]:");
+                Console.ResetColor();
                 bool check = int.TryParse(Console.ReadLine(), out int result);
                 if (result <= 30 && result >= 5)
                 {
@@ -110,12 +134,24 @@ namespace Krankenhaus
         public void DisplayResult(object sender, TimeTickArgs t)
         {
             Console.Clear();
-
-            Console.WriteLine("Amount of ticks: {0}", t.Ticks);
-            Console.WriteLine("Start time was: {0}\n\n", t.StartTime);
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write("Amount of ticks: ");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("{0}", t.Ticks);
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write("Start time was: ");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("{0}\n\n", t.StartTime);
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write("The people who ");
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("The people who died, moment of silence");
-            Console.WriteLine("Amount of people: {0}\n", afterlife.Length);
+            Console.Write("died");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine(", moment of silence");
+            Console.Write("Amount: ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("{0}\n", afterlife.Length);
             Console.ResetColor();
 
 
@@ -137,9 +173,15 @@ namespace Krankenhaus
             }
 
             Console.WriteLine("\n\n");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write("The people who ");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("The people who survived, hooray");
-            Console.WriteLine("Amount of people: {0}\n", survivors.Length);
+            Console.Write("survived");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine(", hooray");
+            Console.Write("Amount: ");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("{0}\n", survivors.Length);
             Console.ResetColor();
 
             var survived = survivors.GetPatients();
@@ -155,9 +197,12 @@ namespace Krankenhaus
         /// </summary>
         public void DisplayList<T>(List<T> list)
         {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("Displaying all patients...\n");
+            Console.ResetColor();
             foreach (T type in list)
             {
-                Console.WriteLine(type.ToString());
+                Console.Write(type.ToString());
             }
         }
 
