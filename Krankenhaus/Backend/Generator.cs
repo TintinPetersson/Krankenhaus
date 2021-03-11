@@ -18,7 +18,7 @@ namespace Krankenhaus
         private Logger logger;
         private AfterLife afterlife;
         private Survivors survivors;
-        EventHandler<EventArgs> StartClock;
+        private EventHandler<EventArgs> StartClock;
         public static EventHandler<UpdateStatusArgs> UpdateStatus;
         public EventHandler<EventArgs> FileReading;
         private string fileName;
@@ -41,14 +41,17 @@ namespace Krankenhaus
             ticker.Tick += queue.OnTick;
             StartClock += StartTicker;
             ticker.Tick += StatusReport;
-            ticker.Tick += FillHospital;
             ticker.Tick += CheckIfPatientsExist;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
             UpdateStatus += SaveToFile;
-            //ticker.Tick += survivors.OnTick;
-            //ticker.Tick += afterlife.OnTick;
+            ticker.Tick += survivors.OnTick;
+            ticker.Tick += afterlife.OnTick;
             ticker.TickerStop += menu.DisplayResult;
+
+            ticker.TickerStop += iva.ClearDoctorsFile;
+            ticker.TickerStop += afterlife.ClearFile;
+            ticker.TickerStop += survivors.ClearFile;
 
             FileReading += sanatorium.ReadData;
             //FileReading += iva.ReadData;
@@ -62,22 +65,23 @@ namespace Krankenhaus
                 FileReading?.Invoke(this, EventArgs.Empty);
 
             }
+            else
+            {
+                int doctorInput = menu.DoctorInput();
+                int patientInput = menu.PatientInput();
 
+                MakePatients(patientInput);
+                Console.Clear();
 
-            int doctorInput = menu.DoctorInput();
-            int patientInput = menu.PatientInput();
+                ShowQueue();
 
-            MakePatients(patientInput);
-            Console.Clear();
-
-            ShowQueue();
-
-            iva.MakeDoctors(doctorInput);
+                iva.MakeDoctors(doctorInput);
+            }
 
             StartClock?.Invoke(this, EventArgs.Empty);
         }
 
-        public async void StartTicker(object sender, EventArgs e)
+        private async void StartTicker(object sender, EventArgs e)
         {
             int time = menu.Menu();
             await Task.Run(() => ticker.Ticking(time));
@@ -88,7 +92,7 @@ namespace Krankenhaus
             Console.WriteLine(queue.GetAllPatients());
         }
 
-        public async void CheckIfPatientsExist(object sender, EventArgs e)
+        private async void CheckIfPatientsExist(object sender, EventArgs e)
         {
             if (queue.Length == 0)
             {
@@ -98,7 +102,7 @@ namespace Krankenhaus
                 }
             }
         }
-        public async void StatusReport(object sender, EventArgs e)
+        private async void StatusReport(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -113,30 +117,43 @@ namespace Krankenhaus
             
             UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString()));
             await logger.LogToFile("Ticker.txt", ticker.tick.ToString(), false);
+            await FillHospital();
         }
 
-        public async void SaveToFile(object sender, UpdateStatusArgs e)
+        private async void SaveToFile(object sender, UpdateStatusArgs e)
         {
             await logger.LogToFile(fileName, e.Status, true);
         }
 
-        public async void FillHospital(object sender, EventArgs e)
+        private async Task FillHospital()
         {
             while (queue.Length != 0)
             {
                 if (!queue.Peek().IsAlive)
                 {
+                    while (afterlife.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     afterlife.Add(queue.GetNextPatient());
                     continue;
                 }
 
                 if (!iva.IsFull)
                 {
+                    while (iva.Saving || queue.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     iva.CheckIn(queue.GetNextPatient());
                     
                 }
                 else if (!sanatorium.IsFull)
                 {
+                    while (sanatorium.Saving || queue.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     sanatorium.CheckIn(queue.GetNextPatient());
                 }
                 else
@@ -145,13 +162,10 @@ namespace Krankenhaus
                 }
             }
 
-            if (queue.Length != 0)
-            {
-                await queue.SaveToFile();
-            }
+            
         }
 
-        public void MakePatients(int userInput)
+        private void MakePatients(int userInput)
         {
             for (int i = 0; i < userInput; i++)
             {

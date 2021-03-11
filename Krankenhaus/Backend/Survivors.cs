@@ -13,6 +13,7 @@ namespace Krankenhaus.Backend
         private string fileName;
         private static Survivors survivors;
 
+        public bool Saving { get; private set; }
         public int Length { get => patients.Count; }
 
         private Survivors()
@@ -20,6 +21,7 @@ namespace Krankenhaus.Backend
             logger = new Logger();
             patients = new List<Patient>();
             fileName = "Survivors.txt";
+            Saving = false;
         }
 
         public static Survivors GetInstance()
@@ -47,26 +49,29 @@ namespace Krankenhaus.Backend
             return toReturn;
         }
 
-        //public async void OnTick(object sender, EventArgs e)
-        //{
-        //    await SaveToFile();
-        //}
+        public async void OnTick(object sender, EventArgs e)
+        {
+                await SaveToFile();
+        }
+
+        public async void ClearFile(object sender, TimeTickArgs e)
+        {
+            await logger.LogToFile(fileName, " ", false);
+        }
 
         public async Task SaveToFile()
         {
-            if (patients.Count == 0)
+            Saving = true;
+            await Task.Delay(1);
+
+            bool appendLine = false;
+            foreach (Patient patient in patients)
             {
-                await logger.LogToFile(fileName, " ", false);
+                await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                appendLine = true;
             }
-            else
-            {
-                bool appendLine = false;
-                foreach (Patient patient in patients)
-                {
-                    await logger.LogToFile(fileName, patient.ToString(), appendLine);
-                    appendLine = true;
-                }
-            }
+
+            Saving = false;
         }
     }
 }

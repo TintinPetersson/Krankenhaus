@@ -29,9 +29,9 @@ namespace Krankenhaus
 
             while (keepTicking)
             {
+                Tick?.Invoke(this, EventArgs.Empty);
                 tick++;
                 await Task.Delay(time * 1000);
-                Tick?.Invoke(this, EventArgs.Empty);
             }
 
             return;
@@ -40,6 +40,7 @@ namespace Krankenhaus
         public async Task StopTick()
         {
             keepTicking = false;
+            await Task.Delay(1);
             TickerStop?.Invoke(this, new TimeTickArgs(startTime, tick));
             await logger.LogToFile("Ticker.txt", " ", false);
         }

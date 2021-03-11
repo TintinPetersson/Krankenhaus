@@ -25,6 +25,7 @@ namespace Krankenhaus
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
+        public bool Saving { get; private set; }
         public bool IsDoctorPresent
         {
             get { return doctorPresent; }
@@ -43,6 +44,7 @@ namespace Krankenhaus
             doctorsFile = "Doctors.txt";
             improvementPercentage = 70;
             deteriorationPercentage = 10;
+            Saving = false;
         }
 
         public void MakeDoctors(int userInput)
@@ -65,12 +67,13 @@ namespace Krankenhaus
         {
             if (patients.Count != 0)
             {
+                await SaveToFile();
+                await SaveDoctorsToFile();
                 await UpdatePatients();
                 if (IsDoctorPresent)
                 {
-                    await AdjustDoctors();
+                    AdjustDoctors();
                 }
-                await SaveToFile();
             }
             else
             {
@@ -86,7 +89,6 @@ namespace Krankenhaus
             {
                 doctor = NextDoctor();
                 IsDoctorPresent = true;
-                await SaveDoctorsToFile();
             }
 
             foreach (Patient patient in patients)
@@ -115,21 +117,24 @@ namespace Krankenhaus
 
                 if (patient.SicknessLevel <= 0)
                 {
+                    while (survivors.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     survivors.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
+                    while (afterlife.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
-            }
-
-            if (patients.Count == 0)
-            {
-                await SaveToFile();
             }
 
             foreach (Patient patient in remove)
@@ -139,9 +144,14 @@ namespace Krankenhaus
                     patients.Remove(patient);
                 }
             }
+
+            if (patients.Count == 0)
+            {
+                await SaveToFile();
+            }
         }
 
-        private async Task AdjustDoctors()
+        private void AdjustDoctors()
         {
             doctor.Fatigue += 5;
 
@@ -150,7 +160,6 @@ namespace Krankenhaus
                 if (doctors.Count != 0)
                 {
                     doctor = NextDoctor();
-                    await SaveDoctorsToFile();
                 }
                 else
                 {
@@ -159,8 +168,14 @@ namespace Krankenhaus
             }
         }
 
+        public async void ClearDoctorsFile(object sender, TimeTickArgs e)
+        {
+            await logger.LogToFile(doctorsFile, " ", false);
+        }
+
         private async Task SaveToFile()
         {
+            Saving = true;
             if (patients.Count == 0)
             {
                 await logger.LogToFile(fileName, " ", false);
@@ -187,9 +202,12 @@ namespace Krankenhaus
                     }
                 }
             }
+            Saving = false;
         }
         private async Task SaveDoctorsToFile()
         {
+            Saving = true;
+            await Task.Delay(1);
             bool appendLine = false;
 
             if (doctors.Count == 0)
@@ -204,6 +222,7 @@ namespace Krankenhaus
                     appendLine = true;
                 }
             }
+            Saving = false;
         }
         private Doctor NextDoctor()
         {

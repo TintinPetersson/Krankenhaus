@@ -22,6 +22,7 @@ namespace Krankenhaus
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
+        public bool Saving { get; private set; }
 
         public Sanatorium()
         {
@@ -34,6 +35,7 @@ namespace Krankenhaus
             improvementPercentage = 35;
             deteriorationPercentage = 50;
             readFromFile = new ReadFromFile();
+            Saving = false;
         }
         public void CheckIn(Patient patient)
         {
@@ -46,8 +48,8 @@ namespace Krankenhaus
             if (patients.Count != 0)
             {
                 await SaveToFile();
-                await afterlife.SaveToFile();
-                await survivors.SaveToFile();
+                //await afterlife.SaveToFile();
+                //await survivors.SaveToFile();
                 await UpdatePatients();
             }
         }
@@ -73,22 +75,24 @@ namespace Krankenhaus
 
                 if (patient.SicknessLevel <= 0)
                 {
+                    while (survivors.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     survivors.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
                 else if (patient.SicknessLevel >= 10)
                 {
+                    while (afterlife.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
                     afterlife.Add(patient);
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
-
-            }
-
-            if (patients.Count == 0)
-            {
-                await SaveToFile();
             }
 
             foreach (Patient patient in remove)
@@ -97,6 +101,11 @@ namespace Krankenhaus
                 {
                     patients.Remove(patient);
                 }
+            }
+
+            if (patients.Count == 0)
+            {
+                await SaveToFile();
             }
         }
 
@@ -113,6 +122,8 @@ namespace Krankenhaus
 
         private async Task SaveToFile()
         {
+            Saving = true;
+            await Task.Delay(1);
             if (patients.Count == 0)
             {
                 await logger.LogToFile(fileName, " ", false);
@@ -126,6 +137,7 @@ namespace Krankenhaus
                     appendLine = true;
                 }
             }
+            Saving = false;
         }
     }
 }

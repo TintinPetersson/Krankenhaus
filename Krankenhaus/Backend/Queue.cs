@@ -22,8 +22,10 @@ namespace Krankenhaus
             fileName = "Queue.txt";
             improvementPercentage = 5;
             deteriorationPercentage = 80;
+            Saving = false;
         }
 
+        public bool Saving { get; private set; }
         public int Length { get => patients.Count; }
 
         public Patient GetNextPatient()
@@ -41,8 +43,10 @@ namespace Krankenhaus
             patients.Enqueue(patient);
         }
 
-        public void OnTick(object sender, EventArgs e)
+        public async void OnTick(object sender, EventArgs e)
         {
+            await SaveToFile();
+
             if (patients.Count != 0)
             {
                 UpdatePatients();
@@ -72,8 +76,10 @@ namespace Krankenhaus
             }
         }
 
-        public async Task SaveToFile()
+        private async Task SaveToFile()
         {
+            Saving = true;
+            await Task.Delay(1);
             bool appendLine = false;
 
             if (patients.Count == 0)
@@ -82,12 +88,20 @@ namespace Krankenhaus
             }
             else
             {
-                foreach (Patient patient in patients)
+                if (patients.Count == 0)
                 {
-                    await logger.LogToFile(fileName, patient.ToString(), appendLine);
-                    appendLine = true;
+                    await logger.LogToFile(fileName, " ", appendLine);
+                }
+                else
+                {
+                    foreach (Patient patient in patients)
+                    {
+                        await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                        appendLine = true;
+                    }
                 }
             }
+            Saving = false;
         }
 
 

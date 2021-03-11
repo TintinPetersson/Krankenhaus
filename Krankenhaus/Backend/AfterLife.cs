@@ -13,10 +13,12 @@ namespace Krankenhaus.Backend
         private string fileName;
         private static AfterLife afterLife;
 
+        public bool Saving { get; private set; }
         public int Length { get => patients.Count; }
 
         private AfterLife()
         {
+            Saving = false;
             logger = new Logger();
             patients = new List<Patient>();
             fileName = "Afterlife.txt";
@@ -47,13 +49,19 @@ namespace Krankenhaus.Backend
             return toReturn;
         }
 
-        //public async void OnTick(object sender, EventArgs e)
-        //{
-        //    await SaveToFile();
-        //}
+        public async void OnTick(object sender, EventArgs e)
+        {
+                await SaveToFile();
+        }
+        public async void ClearFile(object sender, TimeTickArgs e)
+        {
+            await logger.LogToFile(fileName, " ", false);
+        }
 
         public async Task SaveToFile()
         {
+            Saving = true;
+            await Task .Delay(1);
             if (patients.Count == 0)
             {
                 await logger.LogToFile(fileName, " ", false);
@@ -67,6 +75,7 @@ namespace Krankenhaus.Backend
                     appendLine = true;
                 }
             }
+            Saving = false;
         }
     }
 }
