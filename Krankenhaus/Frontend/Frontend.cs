@@ -20,9 +20,10 @@ namespace Krankenhaus
             read = new ReadFromFile();
         }
 
-        public bool ReadData()
+        public bool ReadData(out int ticksReturn)
         {
-            if (read.SessionExists())
+            ticksReturn = 0;
+            if (read.SessionExists(out int ticks))
             {
                 while (true)
                 {
@@ -31,6 +32,7 @@ namespace Krankenhaus
 
                     if (answer == "Y")
                     {
+                        ticksReturn = ticks;
                         return true;
                     }
                     else if (answer == "N")

@@ -22,6 +22,7 @@ namespace Krankenhaus
         private int deteriorationPercentage;
         private AfterLife afterlife;
         private Survivors survivors;
+        private ReadFromFile readFromFile;
         public int NumberOfBeds { get; private set; }
         public int OccupiedBeds { get => patients.Count; }
         public bool IsFull { get => NumberOfBeds - OccupiedBeds <= 0; }
@@ -44,6 +45,7 @@ namespace Krankenhaus
             doctorsFile = "Doctors.txt";
             improvementPercentage = 70;
             deteriorationPercentage = 10;
+            readFromFile = new ReadFromFile();
             Saving = false;
         }
 
@@ -51,8 +53,8 @@ namespace Krankenhaus
         {
             for (int i = 0; i < userInput; i++)
             {
-                Doctor doctor = new Doctor();
-                doctors.Enqueue(doctor);
+                Doctor doc = new Doctor();
+                doctors.Enqueue(doc);
                 Thread.Sleep(250);
             }
         }
@@ -61,6 +63,36 @@ namespace Krankenhaus
         {
             patient.ArrivalToHospital = DateTime.Now;
             patients.Add(patient);
+        }
+
+        internal void ReadData(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(fileName);
+
+            foreach (var person in data)
+            {
+                if (person.Title == Title.Doctor)
+                {
+                    doctor = (Doctor)person;
+                    
+                    IsDoctorPresent = true;
+                }
+                else
+                {
+                    patients.Add((Patient)person);
+                }
+            }
+        }
+
+        internal void ReadDoctors(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(doctorsFile);
+
+            foreach (var person in data)
+            {
+                Doctor doc = (Doctor)person;
+                doctors.Enqueue(doc);
+            }
         }
 
         public async void OnTick(object sender, EventArgs e)
@@ -185,7 +217,7 @@ namespace Krankenhaus
                 bool appendLine = false;
                 if (IsDoctorPresent)
                 {
-                    await logger.LogToFile(fileName, "Extra doctor: " + doctor.ToString(), appendLine);
+                    await logger.LogToFile(fileName, doctor.ToString(), appendLine);
                     appendLine = true;
                 }
 
@@ -216,9 +248,9 @@ namespace Krankenhaus
             }
             else
             {
-                foreach (Doctor doctor in doctors)
+                foreach (Doctor doc in doctors)
                 {
-                    await logger.LogToFile(doctorsFile, doctor.ToString(), appendLine);
+                    await logger.LogToFile(doctorsFile, doc.ToString(), appendLine);
                     appendLine = true;
                 }
             }

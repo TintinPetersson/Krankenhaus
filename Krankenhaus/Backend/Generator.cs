@@ -22,6 +22,7 @@ namespace Krankenhaus
         public static EventHandler<UpdateStatusArgs> UpdateStatus;
         public EventHandler<EventArgs> FileReading;
         private string fileName;
+        private int ticks = 0;
         
         public Generator()
         {
@@ -54,16 +55,17 @@ namespace Krankenhaus
             ticker.TickerStop += survivors.ClearFile;
 
             FileReading += sanatorium.ReadData;
-            //FileReading += iva.ReadData;
-            //FileReading += afterlife.ReadData;
-            //FileReading += survivors.ReadData;
+            FileReading += iva.ReadData;
+            FileReading += iva.ReadDoctors;
+            FileReading += afterlife.ReadData;
+            FileReading += survivors.ReadData;
             //FileReading += queue.ReadData;
 
 
-            if (menu.ReadData())
+            if (menu.ReadData(out int ticksReturn))
             {
+                ticks = ticksReturn;
                 FileReading?.Invoke(this, EventArgs.Empty);
-
             }
             else
             {
@@ -106,7 +108,7 @@ namespace Krankenhaus
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"Tick: {ticker.tick}");
+            sb.AppendLine($"Tick: {ticker.tick + ticks}");
             sb.AppendLine($"Queue: {queue.Length} patients");
             sb.AppendLine($"Sanatorium: {sanatorium.OccupiedBeds} patients");
             sb.AppendLine($"IVA: {iva.OccupiedBeds} patients");
@@ -131,7 +133,7 @@ namespace Krankenhaus
             {
                 if (!queue.Peek().IsAlive)
                 {
-                    while (afterlife.Saving)
+                    while (afterlife.Saving || queue.Saving)
                     {
                         await Task.Delay(1);
                     }

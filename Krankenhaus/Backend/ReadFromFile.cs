@@ -9,13 +9,10 @@ namespace Krankenhaus.Backend
 {
     class ReadFromFile
     {
-        public void ReadInfo()
-        {
 
-        }
-
-        public bool SessionExists()
+        public bool SessionExists(out int ticks)
         {
+            ticks = 0;
             if (!File.Exists("Ticker.txt"))
             {
                 return false;
@@ -28,6 +25,7 @@ namespace Krankenhaus.Backend
                 {
                     return false;
                 }
+                ticks = int.Parse(line);
                 return true;
             }
         }
@@ -57,9 +55,6 @@ namespace Krankenhaus.Backend
                 }
 
             }
-
-            
-
         }
 
     }

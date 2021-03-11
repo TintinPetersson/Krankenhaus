@@ -12,6 +12,7 @@ namespace Krankenhaus.Backend
         private Logger logger;
         private string fileName;
         private static Survivors survivors;
+        private ReadFromFile readFromFile;
 
         public bool Saving { get; private set; }
         public int Length { get => patients.Count; }
@@ -22,6 +23,7 @@ namespace Krankenhaus.Backend
             patients = new List<Patient>();
             fileName = "Survivors.txt";
             Saving = false;
+            readFromFile = new ReadFromFile();
         }
 
         public static Survivors GetInstance()
@@ -72,6 +74,15 @@ namespace Krankenhaus.Backend
             }
 
             Saving = false;
+        }
+        internal void ReadData(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(fileName);
+
+            foreach (var person in data)
+            {
+                patients.Add((Patient)person);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Krankenhaus
 {
     class Patient : Person
     {
-        Random rand = new Random();
+        Random rand = new Random((int)DateTime.Now.Ticks);
         public DateTime ArrivalToHospital { get; set; }
         public DateTime DepartureFromHospital { get; set; }
         public string PatientName { get; set; }
@@ -17,16 +17,17 @@ namespace Krankenhaus
         public int SicknessLevel { get; set; }
         public bool IsAlive { get => this.SicknessLevel < 10; }
 
-        public Patient(string name, int sickness, string birth, DateTime arrival, DateTime departure)
+        public Patient(string name, int sickness, string birth, DateTime arrival, DateTime departure) : base (Title.Patient)
         {
             this.PatientName = name;
             this.SicknessLevel = sickness;
             this.DateOfBirth = birth;
             this.ArrivalToHospital = arrival;
             this.DepartureFromHospital = departure;
+
         }
 
-        public Patient()
+        public Patient() : base(Title.Patient)
         {
             this.PatientName = GeneratePatientName();
             this.DateOfBirth = GenerateBirthDate();
@@ -37,10 +38,10 @@ namespace Krankenhaus
         public string GeneratePatientName()
         {
             string[] names = { "Elias", "Karin", "Ola", "Henrik", "Adolf", "Peter", "Oskar", "Olga", "Pontus", 
-                "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", 
+                "Svetlana", "Bill", "Meali", "Jon", "Tryggve", "Lisa", "Nedrin", "Conny", "Sonny", "Berra",
                 "Ilfa", "Anders", "Lars", "Robin", "Oskar", "Jonte", "Dessi", "Yumit", "Emanuel", "André" };
             string[] lastNames = { "Andersson", "Olsson", "Brugg", "Karlsson", "Lokran", "Ergan", "Persson", "Bandera", "Nilsson", "Skogh", "Tillerås", "Guyler", 
-            "Kullman", "Tannenberg", "Robinsson"};
+            "Kullman", "Tannenberg", "Robinsson", "Petersson", "Eriksson", "Berg", "Baggins", "Boufadene", "Gamgee"};
 
             string firstName = names[rand.Next(0, names.Length)];
             string lastName = lastNames[rand.Next(0, lastNames.Length)];

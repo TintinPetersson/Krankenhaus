@@ -12,6 +12,7 @@ namespace Krankenhaus.Backend
         private Logger logger;
         private string fileName;
         private static AfterLife afterLife;
+        private ReadFromFile readFromFile;
 
         public bool Saving { get; private set; }
         public int Length { get => patients.Count; }
@@ -22,6 +23,7 @@ namespace Krankenhaus.Backend
             logger = new Logger();
             patients = new List<Patient>();
             fileName = "Afterlife.txt";
+            readFromFile = new ReadFromFile();
         }
 
         public static AfterLife GetInstance()
@@ -76,6 +78,16 @@ namespace Krankenhaus.Backend
                 }
             }
             Saving = false;
+        }
+
+        internal void ReadData(object sender, EventArgs e)
+        {
+            var data = readFromFile.GetPeopleList(fileName);
+
+            foreach (var person in data)
+            {
+                patients.Add((Patient)person);
+            }
         }
     }
 }
