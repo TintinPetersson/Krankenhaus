@@ -14,7 +14,7 @@ namespace Krankenhaus
         private Sanatorium sanatorium;
         private IVA iva;
         private Ticker ticker;
-        private Frontend menu;
+        private Frontend frontend;
         private Logger logger;
         private AfterLife afterlife;
         private Survivors survivors;
@@ -35,7 +35,7 @@ namespace Krankenhaus
             sanatorium = new Sanatorium();
             iva = new IVA();
             survivors = Survivors.GetInstance();
-            menu = new Frontend();
+            frontend = new Frontend();
             logger = new Logger();
         }
 
@@ -46,7 +46,7 @@ namespace Krankenhaus
 
             ticker.Tick += queue.OnTick;
             ticker.Tick += StatusReport;
-            ticker.Tick += CheckIfPatientsExist;
+            ticker.Tick += CheckIfPatientsLeft;
             ticker.Tick += sanatorium.OnTick;
             ticker.Tick += iva.OnTick;
             ticker.Tick += survivors.OnTick;
@@ -54,7 +54,7 @@ namespace Krankenhaus
 
             UpdateStatus += SaveToFile;
 
-            ticker.TickerStop += menu.DisplayResult;
+            ticker.TickerStop += frontend.DisplayResult;
             ticker.TickerStop += iva.ClearDoctorsFile;
             ticker.TickerStop += afterlife.ClearFile;
             ticker.TickerStop += survivors.ClearFile;
@@ -67,22 +67,27 @@ namespace Krankenhaus
             FileReading += queue.ReadData;
             #endregion
 
-
-            if (menu.ReadData(out int ticksReturn))
+            // Checks if there already exist files to read from
+            if (frontend.ReadData(out int ticksReturn))
             {
                 ticks = ticksReturn;
                 FileReading?.Invoke(this, EventArgs.Empty);
             }
+            // If there are no files or the user doesn't want to read from existing files
             else
             {
-                int doctorInput = menu.DoctorInput();
-                int patientInput = menu.PatientInput();
+                // Gets the user's input about how many doctors and patients should be generated
+                int doctorInput = frontend.DoctorInput();
+                int patientInput = frontend.PatientInput();
 
+                // Genereate patients
                 MakePatients(patientInput);
                 Console.Clear();
 
+                // Displays the generated patients in the queue
                 ShowQueue();
 
+                // Generates doctors for IVA
                 iva.MakeDoctors(doctorInput);
             }
 
@@ -91,16 +96,20 @@ namespace Krankenhaus
 
         private async void StartTicker(object sender, EventArgs e)
         {
-            int time = menu.Menu();
+            int time = frontend.GetSpeed();
             await Task.Run(() => ticker.Ticking(time));
         }
 
         public void ShowQueue()
         {
-            Console.WriteLine(queue.GetAllPatients());
+            frontend.DisplayList<Patient>(queue.GetAllPatients());
         }
 
-        private async void CheckIfPatientsExist(object sender, EventArgs e)
+        /// <summary>
+        /// Checks every tick if there are any patients left in the hospital, 
+        /// if not it stops the ticker
+        /// </summary>
+        private async void CheckIfPatientsLeft(object sender, EventArgs e)
         {
             if (queue.Length == 0)
             {
@@ -110,6 +119,12 @@ namespace Krankenhaus
                 }
             }
         }
+
+        /// <summary>
+        /// Updates status each tick with a specific format
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void StatusReport(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -122,22 +137,33 @@ namespace Krankenhaus
             sb.AppendLine($"Afterlife: {afterlife.Length}");
             sb.AppendLine($"Survivors: {survivors.Length}");
 
-            
+            // Invokes an event that sends out the status report
             UpdateStatus?.Invoke(this, new UpdateStatusArgs(sb.ToString()));
+
+            // Saves to file which tick we are on
             await logger.LogToFile("Ticker.txt", ticker.tick.ToString(), false);
+
+            // Retrieves patients from queue and adds them to the hospital
             await FillHospital();
         }
 
+        /// <summary>
+        /// Saves the status report to a file
+        /// </summary>
         private async void SaveToFile(object sender, UpdateStatusArgs e)
         {
             await logger.LogToFile(fileName, e.Status, true);
         }
 
+        /// <summary>
+        /// Retrieves patients from queue and adds them to IVA, Sanatorium,
+        /// or Survivors if their sickness level is 0, or to Afterlife if they are dead
+        /// </summary>
         private async Task FillHospital()
         {
             while (queue.Length != 0)
             {
-                if (!queue.Peek().IsAlive)
+                if (!queue.Peek().IsAlive) // Adds the first person in line to Afterlife if it is dead
                 {
                     while (afterlife.Saving || queue.Saving)
                     {
@@ -146,8 +172,17 @@ namespace Krankenhaus
                     afterlife.Add(queue.GetNextPatient());
                     continue;
                 }
+                else if (queue.Peek().SicknessLevel == 0) // Adds the first person in line to survive if it has already recovered
+                {
+                    while (survivors.Saving || queue.Saving)
+                    {
+                        await Task.Delay(1);
+                    }
+                    survivors.Add(queue.GetNextPatient());
+                    continue;
+                }
 
-                if (!iva.IsFull)
+                if (!iva.IsFull) // Adds the first person in line to IVA if there is room
                 {
                     while (iva.Saving || queue.Saving)
                     {
@@ -156,7 +191,7 @@ namespace Krankenhaus
                     iva.CheckIn(queue.GetNextPatient());
                     
                 }
-                else if (!sanatorium.IsFull)
+                else if (!sanatorium.IsFull) // Adds the first person in line to Sanatorium if there is room
                 {
                     while (sanatorium.Saving || queue.Saving)
                     {
@@ -164,22 +199,26 @@ namespace Krankenhaus
                     }
                     sanatorium.CheckIn(queue.GetNextPatient());
                 }
-                else
+                else // If both IVA and Sanatorium are full no more patients can be reitreved from the queue
                 {
                     break;
                 }
             }
-
-            
         }
 
+        /// <summary>
+        /// Generates patients with random names and sickness level
+        /// </summary>
+        /// <param name="userInput">Number of patients to be generated</param>
         private void MakePatients(int userInput)
         {
             for (int i = 0; i < userInput; i++)
             {
                 Patient patient = new Patient();
                 queue.AddToQueue(patient);
-                Thread.Sleep(250);
+                // Since random is based on DateTime we have to use Thread.Sleep
+                // to get variation in names and sickness level
+                Thread.Sleep(250); 
             }
         }
     }

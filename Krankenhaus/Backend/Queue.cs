@@ -56,8 +56,11 @@ namespace Krankenhaus
             }
         }
 
+
         private void UpdatePatients()
         {
+            // Calculates the chance of improving or declining the sickness level for each patient
+
             foreach (Patient patient in patients)
             {
                 int chance = rand.Next(1, 101);
@@ -79,16 +82,22 @@ namespace Krankenhaus
             }
         }
 
+        /// <summary>
+        /// Reads data from text file and populates the patient queue
+        /// </summary>
         internal void ReadData(object sender, EventArgs e)
         {
             var data = readFromFile.GetPeopleList(fileName);
 
             foreach (var person in data)
-            { 
+            {
                 patients.Enqueue((Patient)person);
             }
         }
 
+        /// <summary>
+        /// Saves all the patients to a file
+        /// </summary>
         private async Task SaveToFile()
         {
             Saving = true;
@@ -109,7 +118,7 @@ namespace Krankenhaus
                 {
                     foreach (Patient patient in patients)
                     {
-                        await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                        await logger.LogToFile(fileName, patient.ToFileFormat(), appendLine);
                         appendLine = true;
                     }
                 }
@@ -117,17 +126,18 @@ namespace Krankenhaus
             Saving = false;
         }
 
-
-        public string GetAllPatients()
+        /// <summary>
+        /// Returns a list of all patients in the queue
+        /// </summary>
+        public List<Patient> GetAllPatients()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach(Patient patient in patients)
+            List<Patient> toReturn = new List<Patient>();
+
+            foreach (var pat in patients)
             {
-                sb.AppendLine($"\tPatient: {patient.PatientName.PadLeft(5).PadRight(20)} " +
-                    $"| Sickness level : {patient.SicknessLevel.ToString().PadLeft(2).PadRight(5)} | " +
-                    $"Date of Birth : {patient.DateOfBirth.PadLeft(5).PadRight(15)} | Alive: {patient.IsAlive.ToString().PadLeft(5)}");
+                toReturn.Add(pat);
             }
-            return sb.ToString();
+            return toReturn;
         }
     }
 }

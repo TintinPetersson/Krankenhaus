@@ -40,15 +40,21 @@ namespace Krankenhaus
             doctors = new Queue<Doctor>();
             afterlife = AfterLife.GetInstance();
             survivors = Survivors.GetInstance();
-            NumberOfBeds = 5;
             fileName = "IVA.txt";
             doctorsFile = "Doctors.txt";
-            improvementPercentage = 70;
-            deteriorationPercentage = 10;
             readFromFile = new ReadFromFile();
             Saving = false;
+
+            // Made to be able to alter value in the future
+            NumberOfBeds = 5;
+            improvementPercentage = 70;
+            deteriorationPercentage = 10;
         }
 
+        /// <summary>
+        /// Generates doctors with random names and sickness level
+        /// </summary>
+        /// <param name="userInput">Number of patients to be generated</param>
         public void MakeDoctors(int userInput)
         {
             for (int i = 0; i < userInput; i++)
@@ -65,6 +71,9 @@ namespace Krankenhaus
             patients.Add(patient);
         }
 
+        /// <summary>
+        /// Reads data from text file and populates the patient list
+        /// </summary>
         internal void ReadData(object sender, EventArgs e)
         {
             var data = readFromFile.GetPeopleList(fileName);
@@ -84,6 +93,9 @@ namespace Krankenhaus
             }
         }
 
+        /// <summary>
+        /// Reads data from text file and populates the doctor list
+        /// </summary>
         internal void ReadDoctors(object sender, EventArgs e)
         {
             var data = readFromFile.GetPeopleList(doctorsFile);
@@ -117,14 +129,17 @@ namespace Krankenhaus
         {
             var remove = new List<Patient>();
 
-            if ((IsDoctorPresent == false) && (doctors.Count != 0))
+            if ((IsDoctorPresent == false) && (doctors.Count != 0)) // If there is no doctor and if there are doctors in the queue, get new doctor
             {
                 doctor = NextDoctor();
                 IsDoctorPresent = true;
             }
 
+            // Calculates the chance of improving or declining the sickness level for each patient
+            
             foreach (Patient patient in patients)
             {
+                #region Sickness level calculation
                 int chance = rand.Next(1, 101);
                 int competence = 0;
                 int percentageAdjustment = 0;
@@ -146,7 +161,10 @@ namespace Krankenhaus
 
                 // If none of these conditions are met, the patient will keep its current sickness level
 
+                #endregion
 
+                // Adds patient to either survivors list or afterlife list 
+                #region Dead or Survivor
                 if (patient.SicknessLevel <= 0)
                 {
                     while (survivors.Saving)
@@ -167,8 +185,10 @@ namespace Krankenhaus
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
+                #endregion
             }
 
+            // Removes the patients that were either dead or cured, from the patient list
             foreach (Patient patient in remove)
             {
                 if (patients.Contains(patient))
@@ -177,12 +197,17 @@ namespace Krankenhaus
                 }
             }
 
+            // If there are no patients left this method will not be called again, so we have to update the file to be empty here
             if (patients.Count == 0)
             {
                 await SaveToFile();
             }
         }
 
+        /// <summary>
+        /// Adjusts the current doctor's fatigue, 
+        /// and brings in a new doctor when the current is exhausted
+        /// </summary>
         private void AdjustDoctors()
         {
             doctor.Fatigue += 5;
@@ -205,6 +230,9 @@ namespace Krankenhaus
             await logger.LogToFile(doctorsFile, " ", false);
         }
 
+        /// <summary>
+        /// Saves all the patients and the current doctor to a file
+        /// </summary>
         private async Task SaveToFile()
         {
             Saving = true;
@@ -229,13 +257,17 @@ namespace Krankenhaus
                 {
                     foreach (Patient patient in patients)
                     {
-                        await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                        await logger.LogToFile(fileName, patient.ToFileFormat(), appendLine);
                         appendLine = true;
                     }
                 }
             }
             Saving = false;
         }
+
+        /// <summary>
+        /// Saves all the doctors in the queue
+        /// </summary>
         private async Task SaveDoctorsToFile()
         {
             Saving = true;
@@ -256,6 +288,7 @@ namespace Krankenhaus
             }
             Saving = false;
         }
+
         private Doctor NextDoctor()
         {
             return doctors.Dequeue();

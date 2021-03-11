@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Krankenhaus.Backend
 {
+    /// <summary>
+    /// Created as a singleton, in order to instantiate the same instance of the object
+    /// </summary>
     class Survivors
     {
         private List<Patient> patients;
@@ -53,7 +56,7 @@ namespace Krankenhaus.Backend
 
         public async void OnTick(object sender, EventArgs e)
         {
-                await SaveToFile();
+            await SaveToFile();
         }
 
         public async void ClearFile(object sender, TimeTickArgs e)
@@ -69,12 +72,16 @@ namespace Krankenhaus.Backend
             bool appendLine = false;
             foreach (Patient patient in patients)
             {
-                await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                await logger.LogToFile(fileName, patient.ToFileFormat(), appendLine);
                 appendLine = true;
             }
 
             Saving = false;
         }
+
+        /// <summary>
+        /// Reads data from text file and populates the patient list
+        /// </summary>
         internal void ReadData(object sender, EventArgs e)
         {
             var data = readFromFile.GetPeopleList(fileName);

@@ -20,6 +20,11 @@ namespace Krankenhaus
             read = new ReadFromFile();
         }
 
+        /// <summary>
+        /// If there are any existing files, asks the user if it wants to read from them
+        /// </summary>
+        /// <param name="ticksReturn">Which tick the simulation was on in the last session</param>
+        /// <returns>If data should be read from files</returns>
         public bool ReadData(out int ticksReturn)
         {
             ticksReturn = 0;
@@ -44,7 +49,11 @@ namespace Krankenhaus
             return false;
         }
 
-        public int Menu()
+        /// <summary>
+        /// Lets the user choose the length of the ticks
+        /// </summary>
+        /// <returns>The length of ticks in seconds</returns>
+        public int GetSpeed()
         {
             do
             {
@@ -55,8 +64,11 @@ namespace Krankenhaus
                     return result;
                 }
             } while (true);
-
         }
+
+        /// <summary>
+        /// Lets the user choose how many doctors should be generated
+        /// </summary>
         public int DoctorInput()
         {
             do
@@ -70,6 +82,10 @@ namespace Krankenhaus
             } while (true);
 
         }
+
+        /// <summary>
+        /// Lets the user choose how many patients should be generated
+        /// </summary>
         public int PatientInput()
         {
             do
@@ -88,6 +104,9 @@ namespace Krankenhaus
             Console.WriteLine(e.Status);
         }
 
+        /// <summary>
+        /// Displays the end result
+        /// </summary>
         public void DisplayResult(object sender, TimeTickArgs t)
         {
             Console.Clear();
@@ -117,7 +136,6 @@ namespace Krankenhaus
                 
             }
 
-
             Console.WriteLine("\n\n");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("The people who survived, hooray");
@@ -131,5 +149,17 @@ namespace Krankenhaus
                 Console.WriteLine("Name: {0,-20} | Time spent in hospital: {1} days", item.PatientName, ts.Seconds);
             }
         }
+
+        /// <summary>
+        /// Displays a list of optional data type
+        /// </summary>
+        public void DisplayList<T>(List<T> list)
+        {
+            foreach (T type in list)
+            {
+                Console.WriteLine(type.ToString());
+            }
+        }
+
     }
 }

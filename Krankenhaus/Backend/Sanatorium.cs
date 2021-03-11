@@ -27,15 +27,17 @@ namespace Krankenhaus
         public Sanatorium()
         {
             patients = new List<Patient>();
-            NumberOfBeds = 10;
             logger = new Logger();
+            readFromFile = new ReadFromFile();
             afterlife = AfterLife.GetInstance();
             survivors = Survivors.GetInstance();
             fileName = "Sanatorium.txt";
+            Saving = false;
+
+            // Made to be able to alter value in the future
+            NumberOfBeds = 10;
             improvementPercentage = 35;
             deteriorationPercentage = 50;
-            readFromFile = new ReadFromFile();
-            Saving = false;
         }
         public void CheckIn(Patient patient)
         {
@@ -56,8 +58,11 @@ namespace Krankenhaus
         {
             var remove = new List<Patient>();
 
+            // Calculates the chance of improving or declining the sickness level for each patient
+
             foreach (Patient patient in patients)
             {
+                #region Sickness level calculation
                 int chance = rand.Next(1, 101);
 
                 if (chance <= improvementPercentage)
@@ -71,6 +76,10 @@ namespace Krankenhaus
 
                 // If none of these conditions are met, the patient will keep its current sickness level
 
+                #endregion
+
+                // Adds patient to either survivors list or afterlife list 
+                #region Dead or Survivor
                 if (patient.SicknessLevel <= 0)
                 {
                     while (survivors.Saving)
@@ -91,8 +100,10 @@ namespace Krankenhaus
                     patient.DepartureFromHospital = DateTime.Now;
                     remove.Add(patient);
                 }
+                #endregion
             }
 
+            // Removes the patients that were either dead or cured, from the patient list
             foreach (Patient patient in remove)
             {
                 if (patients.Contains(patient))
@@ -101,12 +112,16 @@ namespace Krankenhaus
                 }
             }
 
+            // If there are no patients left this method will not be called again, so we have to update the file to be empty here
             if (patients.Count == 0)
             {
                 await SaveToFile();
             }
         }
 
+        /// <summary>
+        /// Reads data from text file and populates the patient list
+        /// </summary>
         internal void ReadData(object sender, EventArgs e)
         {
             var data = readFromFile.GetPeopleList(fileName);
@@ -118,6 +133,9 @@ namespace Krankenhaus
 
         }
 
+        /// <summary>
+        /// Saves all the patients and the current doctor to a file
+        /// </summary>
         private async Task SaveToFile()
         {
             Saving = true;
@@ -131,7 +149,7 @@ namespace Krankenhaus
                 bool appendLine = false;
                 foreach (Patient patient in patients)
                 {
-                    await logger.LogToFile(fileName, patient.ToString(), appendLine);
+                    await logger.LogToFile(fileName, patient.ToFileFormat(), appendLine);
                     appendLine = true;
                 }
             }

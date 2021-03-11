@@ -9,7 +9,11 @@ namespace Krankenhaus.Backend
 {
     class ReadFromFile
     {
-
+        /// <summary>
+        /// Checks if an active simulation exists
+        /// </summary>
+        /// <param name="ticks">Shows which tick the simulation was on in the last session</param>
+        /// <returns>a boolean</returns>
         public bool SessionExists(out int ticks)
         {
             ticks = 0;
@@ -30,6 +34,11 @@ namespace Krankenhaus.Backend
             }
         }
 
+        /// <summary>
+        /// Retrieves data from given file path and returns them as an IEnumerable
+        /// </summary>
+        /// <param name="path">File path to retrieve data from</param>
+        /// <returns>An IEnumerable<Person></returns>
         public IEnumerable<Person> GetPeopleList(string path)
         {
             StreamReader reader = new StreamReader(path);
@@ -53,7 +62,6 @@ namespace Krankenhaus.Backend
                         yield return pat;
                     }
                 }
-
             }
         }
 
